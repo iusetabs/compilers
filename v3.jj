@@ -1,0 +1,170 @@
+/* 
+ ___________________________
+|                           |
+|	SECTION ONE         |
+|    	  OPTIONS           |
+|___________________________|
+
+*/
+
+options { JAVA_UNICODE_ESCAPE = true;
+	  IGNORE_CASE = true;
+	}
+/* 
+ ___________________________
+|                           |
+|	SECTION TWO         |
+|    	 USER-CODE          |
+|___________________________|
+
+*/
+PARSER_BEGIN(MyParser)
+	public class MyParser{
+		public static void main (String [] args){
+			MyParser tokeniser;
+			//write shit here
+			if ( args.length == 0){
+				System.out.println("Reading from standard input....");
+				tokeniser = new MyParser(System.in);
+			}else if (args.length == 1){
+				try{
+					tokeniser = new MyParser(new java.io.FileInputStream(args[0]));
+				} catch (java.io.FileNotFoundException e) {
+					System.err.println("File " + args[0] + " not found.");
+					return;
+				}
+			}
+			else{
+				
+				System.out.println("SLP Tokeniser: Usage is one of:");
+				System.out.println("java SLPTokeniser < inputfile");
+				System.out.println("OR");
+				System.out.println("java SLPTokeniser inputfile");
+				return;
+			}
+			/*
+			* We’ve now initialised the tokeniser to read from the appropriate place,
+			* so just keep reading tokens and printing them until we hit EOF
+			*/
+			for (Token t = getNextToken(); t.kind!=EOF; t = getNextToken()) {
+				// Print out the actual text for the constants, identifiers etc.
+				if (t.kind==INTEGER)
+				{
+					System.out.print("Integer");
+					System.out.print("( Kind: " + t.kind + " Image: " + t.image + " ");
+					System.out.println("Token: " + token + ")");
+				}
+				else if (t.kind==ID)
+				{
+					System.out.print("Identifier");
+					System.out.print("( Kind: " + t.kind + " Image: " + t.image + " ");
+					System.out.println("Token: " + token + ")");
+				}
+				else{
+					System.out.print("( Kind: " + t.kind + " Image: " + t.image + " ");
+					System.out.println("Token: " + token + ")");
+				}
+			}
+		}
+	}
+PARSER_END(MyParser) 
+
+/* 
+ ___________________________
+|                           |
+|      SECTION THREE        |
+|     TOKEN-DEFINITONS      |
+|___________________________|
+
+*/
+TOKEN_MGR_DECLS: {
+	static int commentNesting = 0;
+}
+
+SKIP : /* COMMENTS */ {
+	"/*" { commentNesting++;
+	       System.out.println("Comment"); } : IN_COMMENT
+     | "//" { System.out.println("One line comment found"); } 
+}
+
+<IN_COMMENT> SKIP : {
+	"/*" { commentNesting++; }
+     |  "*/" { commentNesting--;
+		if (commentNesting == 0){
+			System.out.println("Comments closed");
+			SwitchTo(DEFAULT);
+		}
+		else{
+			System.out.println("Comments not shut yet");
+			System.out.println("Comments left: " + Integer.toString(commentNesting));
+		}
+	     }
+     | <~[]>
+}
+
+TOKEN : /*---RESERVED WORDS---*/ {
+	< MAIN : "main" >
+      | < BEGIN : "begin" >
+      | < END : "end" >
+      | < RETURN : "return" >
+      | < IF : "if" >
+      | < WHILE : "while" >
+      | < ELSE : "else" >
+      | < DECL_VARIABLE : "variable" >
+      | < DECL_INTEGER : "integer" >
+      | < DECL_CONSTANT : "constant" >
+      | < VOID : "void" >
+      | < IS : "is" >
+      | < DO_SKIP : "skip" >
+      | < IS_TRUE : "true" >
+      | < IS_FALSE : "false" >
+      | < BOOLEAN : "boolean" >
+      /*| < : "" >*/
+}
+
+SKIP : /*** Ignoring spaces/tabs/newlines ***/
+{
+	" "
+	| "\t"
+	| "\n"
+	| "\r"
+	| "\f"
+}
+
+TOKEN : /*---TOKENS---*/ {	
+	< COMMA : "," >
+      | < SEMICOLUMN : ";" >	
+      | < COLUMN : ":" >	
+      | < IS_VALUE: ":=" >	
+      | < OPEN_BRACKET : "(" >	
+      | < CLOSE_BRACKET : ")" >	
+      | < PLUS_SIGN : "+" >	
+      | < MINUS_SIGN : "-" >	
+      | < TILDA : "~" >	
+      | < OR_SIGN : "|" >	
+      | < AND_SIGN : "&" >	
+      | < EQUALS_SIGN : "=" >	
+      | < NEGATION_EQUALS : "!=" >	
+      | < LESS_THAN: "<" >	
+      | < EQUAL_LESS_THAN : "<=" >	
+      | < GREATER_THAN : ">" >	
+      | < EQUAL_GREATER_THAN: ">=" >	
+
+}
+
+TOKEN : /*---IDENTIFIERS---*/ {
+        < INTEGER : "0" | ("-")? (["1" - "9"])(["0" - "9"])*>
+	| < #INVALID_INTEGER : ("-")? "0" (["0" - "9"])*>
+	| < #DIGIT : ["0" - "9"] >
+	| < ID : <LETTER>("_"|<LETTER>|<DIGIT>)*>
+	| < #LETTER : ["a" - "z", "A" - "Z"] >
+}
+/* 
+ ___________________________
+|                           |
+|	SECTION FOUR        |
+|       GRAMMAR RULES       |
+|___________________________|
+*/
+
+
