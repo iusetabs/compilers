@@ -84,7 +84,7 @@ TOKEN_MGR_DECLS: {
 SKIP : /* COMMENTS */ {
 	"/*" { commentNesting++;
 	       System.out.println("Comment"); } : IN_COMMENT
-     | "//" { System.out.println("One line comment found"); } 
+     | < SINGLE_COMMENT:  "//" (~["\n"])+ >  { System.out.println("One line comment found"); }
 }
 
 <IN_COMMENT> SKIP : {
