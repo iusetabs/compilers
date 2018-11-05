@@ -173,22 +173,47 @@ TOKEN : /*---IDENTIFIERS---*/ {
 |___________________________|
 */
 
-void Prog() : 
-{Table t;} 
+void Prog() : {}
 {
-	t = Stm(null) <EOF>
+	Stm() <EOF>
 }
 
-Table Stm(Table t) :
-{}
+void Stm() : {}
 {
-	(t=SimpleStm(t) [<SEMIC> t=Stm(t)]) {return t; }
+	(SimpleStm() [<SEMIC> Stm()] )
 }
 
-Table SimpleStm(Table t) : 
-{} 
+void SimpleStm() : {}
 {
+	(Ident() <ASSIGN> Exp())
+	| (<PRINT> <LBR> ExpList() <RBR>)
+}
 
+void SimpleExp() : {}
+{
+	IdExp()
+	| NumExp()
+	| ( <LBR> Stm() <COMMA> Exp() <RBR> )
+}
+
+void Ident() : {}
+{
+	<ID> 
+}
+
+void IdExp(): {}
+{
+	<ID> 
+}
+
+void NumExp(): {}
+{
+	<NUM>
+}
+
+void ExpList() : {}
+{
+	(Exp() [<COMMA> ExpList()])
 }
 
 int BinOp() : {} /* OP-Precedencs */
