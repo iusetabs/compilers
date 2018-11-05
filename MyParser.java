@@ -26,6 +26,12 @@
 			* We’ve now initialised the tokeniser to read from the appropriate place,
 			* so just keep reading tokens and printing them until we hit EOF
 			*/
+                        try {
+                                tokeniser.Prog();
+                        }catch(ParseException e) {
+                                System.out.println(e.getMessage());
+                                System.out.println("SLP Interpreter: Encountered errors during parse");
+                        }
                         for (Token t = getNextToken(); t.kind!=EOF; t = getNextToken()) {
                                 // Print out the actual text for the constants, identifiers etc.
                                 if (t.kind==INTEGER)
@@ -46,6 +52,23 @@
                                 }
                         }
                 }
+
+/* 
+ ___________________________
+|                           |
+|	SECTION FOUR        |
+|       GRAMMAR RULES       |
+|___________________________|
+*/
+  static final public void Prog() throws ParseException {
+    Stm();
+    jj_consume_token(0);
+  }
+
+  static final public void Stm() throws ParseException {
+    jj_consume_token(MAIN);
+    jj_consume_token(END);
+  }
 
   static private boolean jj_initialized_once = false;
   /** Generated Token Manager. */

@@ -47,12 +47,12 @@ PARSER_BEGIN(MyParser)
 			* so just keep reading tokens and printing them until we hit EOF
 			*/
 			try {
-				interprer.Prog();
+				tokeniser.Prog();
 			}catch(ParseException e) {
 				System.out.println(e.getMessage());
 				System.out.println("SLP Interpreter: Encountered errors during parse");
 			}
-			/* for (Token t = getNextToken(); t.kind!=EOF; t = getNextToken()) {
+			for (Token t = getNextToken(); t.kind!=EOF; t = getNextToken()) {
 				// Print out the actual text for the constants, identifiers etc.
 				if (t.kind==INTEGER)
 				{
@@ -70,7 +70,7 @@ PARSER_BEGIN(MyParser)
 					System.out.print("( Kind: " + t.kind + " Image: " + t.image + " ");
 					System.out.println("Token: " + token + ")");
 				}
-			} */
+			} 
 		}
 	}
 PARSER_END(MyParser) 
@@ -180,10 +180,10 @@ void Prog() : {}
 
 void Stm() : {}
 {
-	(SimpleStm() [<SEMIC> Stm()] )
+	<MAIN><END>
 }
 
-void SimpleStm() : {}
+/*void SimpleStm() : {}
 {
 	(Ident() <ASSIGN> Exp())
 	| (<PRINT> <LBR> ExpList() <RBR>)
@@ -216,10 +216,11 @@ void ExpList() : {}
 	(Exp() [<COMMA> ExpList()])
 }
 
-int BinOp() : {} /* OP-Precedencs */
+int BinOp() : {} /* OP-Precedencs 
 {
 	<PLUS_SIGN> { return 1; }
 	| <MINUS_SIGN> { return 2; }
 	| <MULT_SIGN> { return 3; }
 	| <DIV_SIGN> { return 4; }
 }
+*/
