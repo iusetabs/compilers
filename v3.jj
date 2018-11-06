@@ -180,56 +180,130 @@ void Prog() : {}
 
 void decl_list() : {}
 {
+	decl() <SEMICOLUMN> (decl_list())?
+}
 
+void decl() : {}
+{
+	var_decl() 
+	| const_decl()
+}
+
+void var_decl(): {}
+{
+	<DECL_VARIABLE> <ID> <COLUMN> type()
+}
+	
+void const_decl(): {}
+{
+	<DECL_CONSTANT> <ID> <COLUMN> type() <IS_VALUE> expression()
+}
+
+void type(): {}
+{
+	<DECL_INTEGER>
+	| <BOOLEAN>
+	| <VOID>
 }
 
 void func_list(): {}
 {
+	function() (func_list())?	
+}
 
+void function(): {}
+{
+	type() <ID> parameter_list() <IS> decl_list() <BEGIN> statement_block() <RETURN> (expression())? <END>
+
+}
+
+void parameter_list(): {}
+{
+	(nemp_parameter_list())?
+}
+
+void nemp_parameter_list(): {}
+{
+	<ID> <COLUMN> type() 
+	| <ID> <COLUMN> type() <COMMA> nemp_parameter_list()
 }
 
 void main() : {}
 {
-
+	<MAIN> <BEGIN> decl_list() statement_block() <END>
 }
-/*void SimpleStm() : {}
+
+void statement_block(): {}
 {
-	(Ident() <ASSIGN> Exp())
-	| (<PRINT> <LBR> ExpList() <RBR>)
+	statement() statement_block()
 }
 
-void SimpleExp() : {}
+void statement(): {}
 {
-	IdExp()
-	| NumExp()
-	| ( <LBR> Stm() <COMMA> Exp() <RBR> )
+	<ID> <IS_VALUE> expression() <SEMICOLUMN>
+	| <ID> <OPEN_BRACKET> arg_list() <CLOSE_BRACKET> <SEMICOLUMN>
+	| <BEGIN> statement_block() <END> 
+	| <IF> condition() <BEGIN> statement_block() <END> 
+	| <ELSE> <BEGIN> statement_block() <END> 
+	| <WHILE> condition() <BEGIN> statement_block() <END> 
+	| <DO_SKIP> <SEMICOLUMN>
 }
 
-void Ident() : {}
+void expression(): {}
+{
+	fragement() binary_arith_op() fragement() 
+	| <OPEN_BRACKET> expression() <CLOSE_BRACKET>
+	| <ID> <OPEN_BRACKET> arg_list() <CLOSE_BRACKET> 
+	| fragement()  
+}
+
+void binary_arith_op(): {}
+{
+	<PLUS_SIGN> 
+	| <MINUS_SIGN> 
+}	
+
+void fragement(): {} 
+{
+	<ID>
+	| <MINUS_SIGN> <ID>
+	| <INTEGER> 
+	| <IS_TRUE>
+	| <IS_FALSE>
+	| expression()
+}
+
+void condition(): {}
+{
+	<TILDA> condition() 
+	| condition()
+	| expression() comp_op() expression()
+	| condition() ( <OR_SIGN> | <AND_SIGN> ) condition()
+}
+
+void comp_op(): {}
+{
+	<EQUALS_SIGN> 
+	| <NEGATION_EQUALS> 
+	| <LESS_THAN>
+	| <EQUAL_LESS_THAN>
+	| <GREATER_THAN>
+	| <EQUAL_GREATER_THAN>
+}
+
+void arg_list(): {}
+{
+	(nemp_arg_list())?
+}
+
+void nemp_arg_list(): {}
 {
 	<ID> 
+	| <ID> <COMMA> nemp_arg_list()
 }
 
-void IdExp(): {}
-{
-	<ID> 
-}
-
-void NumExp(): {}
-{
-	<NUM>
-}
-
-void ExpList() : {}
-{
-	(Exp() [<COMMA> ExpList()])
-}
-
-int BinOp() : {} /* OP-Precedencs 
+int BinOp() : {} /* OP-Precedencs */ 
 {
 	<PLUS_SIGN> { return 1; }
 	| <MINUS_SIGN> { return 2; }
-	| <MULT_SIGN> { return 3; }
-	| <DIV_SIGN> { return 4; }
 }
-*/
