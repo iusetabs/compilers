@@ -251,10 +251,10 @@ void statement(): {}
 
 void expression(): {}
 {
-	fragement() binary_arith_op() fragement() 
+	fragment() binary_arith_op() fragment() 
 	| <OPEN_BRACKET> expression() <CLOSE_BRACKET>
 	| <ID> <OPEN_BRACKET> arg_list() <CLOSE_BRACKET> 
-	| fragement()  
+	| fragment()  
 }
 
 void binary_arith_op(): {}
@@ -263,14 +263,20 @@ void binary_arith_op(): {}
 	| <MINUS_SIGN> 
 }	
 
-void fragement(): {} 
+void fragment(): {} 
 {
-	<ID>
-	| <MINUS_SIGN> <ID>
-	| <INTEGER> 
-	| <IS_TRUE>
-	| <IS_FALSE>
-	| expression()
+	(<MINUS_SIGN>)? <ID> fragment_PRIME()
+	| <INTEGER> fragment_PRIME() 
+	| <IS_TRUE> fragment_PRIME()
+	| <IS_FALSE> fragment_PRIME()
+}
+
+void fragment_PRIME(): {}
+{
+	(binary_arith_op() fragment() fragment_PRIME())?
+	| <OPEN_BRACKET> fragment_PRrME() <CLOSE_BRACKET>
+	| <ID> <OPEN_BRACKET> arg_list() <CLOSE_BRACKET> 
+	| fragment()  
 }
 
 void condition(): {}
