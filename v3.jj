@@ -247,7 +247,7 @@ void statement(): {}
 	| <DO_SKIP> <SEMICOLUMN>
 }
 
-void expression(): {}
+/*void expression(): {}
 {
 	(<MINUS_SIGN>)? <ID> ( (binary_arith_op() fragment() )*  | ( <OPEN_BRACKET> ( arg_list() | expression() ) <CLOSE_BRACKET> )  )
 }
@@ -263,6 +263,26 @@ void fragment(): {}
 	<INTEGER>  
 	| <IS_TRUE> 
 	| <IS_FALSE> 
+}*/
+
+void expression(): {}
+{
+        fragment() (binary_arith_op() fragment())?
+	| ( <ID> <OPEN_BRACKET> arg_list() | <OPEN_BRACKET> expression() ) <CLOSE_BRACKET>
+}
+
+void binary_arith_op(): {}
+{
+        <PLUS_SIGN> 
+        | <MINUS_SIGN> 
+}    
+
+void fragment(): {}  
+{
+        (<MINUS_SIGN>)? <ID> binary_arith_op() fragment() //TODO ID on 282 is clasing with ID of 271 
+        | <INTEGER> binary_arith_op() fragment()
+        | <IS_TRUE> binary_arith_op() fragment()
+        | <IS_FALSE> binary_arith_op() fragment()
 }
 
 void condition(): {}
