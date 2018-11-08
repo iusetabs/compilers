@@ -249,7 +249,7 @@ void statement(): {}
 
 void expression(): {}
 {
-	(<MINUS_SIGN>)? <ID> ( ( fragment_PRIME() (binary_arith_op() fragment() )? ) | ( <OPEN_BRACKET> ( arg_list() | expression() ) <CLOSE_BRACKET> )  )
+	(<MINUS_SIGN>)? <ID> ( (binary_arith_op() fragment() )*  | ( <OPEN_BRACKET> ( arg_list() | expression() ) <CLOSE_BRACKET> )  )
 }
 
 void binary_arith_op(): {}
@@ -260,14 +260,9 @@ void binary_arith_op(): {}
 
 void fragment(): {} 
 {
-	<INTEGER> fragment_PRIME() 
-	| <IS_TRUE> fragment_PRIME()
-	| <IS_FALSE> fragment_PRIME()
-}
-
-void fragment_PRIME(): {}
-{
-	binary_arith_op() fragment() fragment_PRIME()
+	<INTEGER>  
+	| <IS_TRUE> 
+	| <IS_FALSE> 
 }
 
 void condition(): {}
