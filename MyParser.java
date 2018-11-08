@@ -61,13 +61,408 @@
 |___________________________|
 */
   static final public void Prog() throws ParseException {
-    Stm();
+    decl_list();
+    func_list();
+    main();
     jj_consume_token(0);
   }
 
-  static final public void Stm() throws ParseException {
-    jj_consume_token(MAIN);
+  static final public void decl_list() throws ParseException {
+    decl();
+    jj_consume_token(SEMICOLUMN);
+    switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+    case DECL_VARIABLE:
+    case DECL_CONSTANT:
+      decl_list();
+      break;
+    default:
+      jj_la1[0] = jj_gen;
+      ;
+    }
+  }
+
+  static final public void decl() throws ParseException {
+    switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+    case DECL_VARIABLE:
+      var_decl();
+      break;
+    case DECL_CONSTANT:
+      const_decl();
+      break;
+    default:
+      jj_la1[1] = jj_gen;
+      jj_consume_token(-1);
+      throw new ParseException();
+    }
+  }
+
+  static final public void var_decl() throws ParseException {
+    jj_consume_token(DECL_VARIABLE);
+    jj_consume_token(ID);
+    jj_consume_token(COLUMN);
+    type();
+  }
+
+  static final public void const_decl() throws ParseException {
+    jj_consume_token(DECL_CONSTANT);
+    jj_consume_token(ID);
+    jj_consume_token(COLUMN);
+    type();
+    jj_consume_token(IS_VALUE);
+    expression();
+  }
+
+  static final public void type() throws ParseException {
+    switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+    case DECL_INTEGER:
+      jj_consume_token(DECL_INTEGER);
+      break;
+    case BOOLEAN:
+      jj_consume_token(BOOLEAN);
+      break;
+    case VOID:
+      jj_consume_token(VOID);
+      break;
+    default:
+      jj_la1[2] = jj_gen;
+      jj_consume_token(-1);
+      throw new ParseException();
+    }
+  }
+
+  static final public void func_list() throws ParseException {
+    function();
+    switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+    case DECL_INTEGER:
+    case VOID:
+    case BOOLEAN:
+      func_list();
+      break;
+    default:
+      jj_la1[3] = jj_gen;
+      ;
+    }
+  }
+
+  static final public void function() throws ParseException {
+    type();
+    jj_consume_token(ID);
+    parameter_list();
+    jj_consume_token(IS);
+    decl_list();
+    jj_consume_token(BEGIN);
+    statement_block();
+    jj_consume_token(RETURN);
+    switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+    case MINUS_SIGN:
+    case ID:
+      expression();
+      break;
+    default:
+      jj_la1[4] = jj_gen;
+      ;
+    }
     jj_consume_token(END);
+  }
+
+  static final public void parameter_list() throws ParseException {
+    switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+    case ID:
+      nemp_parameter_list();
+      break;
+    default:
+      jj_la1[5] = jj_gen;
+      ;
+    }
+  }
+
+  static final public void nemp_parameter_list() throws ParseException {
+    jj_consume_token(ID);
+    jj_consume_token(COLUMN);
+    type();
+    switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+    case COMMA:
+      jj_consume_token(COMMA);
+      nemp_parameter_list();
+      break;
+    default:
+      jj_la1[6] = jj_gen;
+      ;
+    }
+  }
+
+  static final public void main() throws ParseException {
+    jj_consume_token(MAIN);
+    jj_consume_token(BEGIN);
+    decl_list();
+    statement_block();
+    jj_consume_token(END);
+  }
+
+  static final public void statement_block() throws ParseException {
+    statement();
+    statement_block();
+  }
+
+  static final public void statement() throws ParseException {
+    switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+    case ID:
+      jj_consume_token(ID);
+      switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+      case IS_VALUE:
+        jj_consume_token(IS_VALUE);
+        expression();
+        break;
+      case OPEN_BRACKET:
+        jj_consume_token(OPEN_BRACKET);
+        arg_list();
+        jj_consume_token(CLOSE_BRACKET);
+        break;
+      default:
+        jj_la1[7] = jj_gen;
+        jj_consume_token(-1);
+        throw new ParseException();
+      }
+      jj_consume_token(SEMICOLUMN);
+      break;
+    case BEGIN:
+      jj_consume_token(BEGIN);
+      statement_block();
+      jj_consume_token(END);
+      break;
+    case IF:
+      jj_consume_token(IF);
+      condition();
+      jj_consume_token(BEGIN);
+      statement_block();
+      jj_consume_token(END);
+      break;
+    case ELSE:
+      jj_consume_token(ELSE);
+      jj_consume_token(BEGIN);
+      statement_block();
+      jj_consume_token(END);
+      break;
+    case WHILE:
+      jj_consume_token(WHILE);
+      condition();
+      jj_consume_token(BEGIN);
+      statement_block();
+      jj_consume_token(END);
+      break;
+    case DO_SKIP:
+      jj_consume_token(DO_SKIP);
+      jj_consume_token(SEMICOLUMN);
+      break;
+    default:
+      jj_la1[8] = jj_gen;
+      jj_consume_token(-1);
+      throw new ParseException();
+    }
+  }
+
+  static final public void expression() throws ParseException {
+    switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+    case MINUS_SIGN:
+      jj_consume_token(MINUS_SIGN);
+      break;
+    default:
+      jj_la1[9] = jj_gen;
+      ;
+    }
+    jj_consume_token(ID);
+    switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+    case MINUS_SIGN:
+    case ID:
+      fragment_PRIME();
+      switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+      case PLUS_SIGN:
+      case MINUS_SIGN:
+        binary_arith_op();
+        fragment();
+        break;
+      default:
+        jj_la1[10] = jj_gen;
+        ;
+      }
+      break;
+    case OPEN_BRACKET:
+      jj_consume_token(OPEN_BRACKET);
+      arg_list();
+      jj_consume_token(CLOSE_BRACKET);
+      break;
+    default:
+      jj_la1[11] = jj_gen;
+      jj_consume_token(-1);
+      throw new ParseException();
+    }
+  }
+
+  static final public void binary_arith_op() throws ParseException {
+    switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+    case PLUS_SIGN:
+      jj_consume_token(PLUS_SIGN);
+      break;
+    case MINUS_SIGN:
+      jj_consume_token(MINUS_SIGN);
+      break;
+    default:
+      jj_la1[12] = jj_gen;
+      jj_consume_token(-1);
+      throw new ParseException();
+    }
+  }
+
+  static final public void fragment() throws ParseException {
+    switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+    case INTEGER:
+      jj_consume_token(INTEGER);
+      fragment_PRIME();
+      break;
+    case IS_TRUE:
+      jj_consume_token(IS_TRUE);
+      fragment_PRIME();
+      break;
+    case IS_FALSE:
+      jj_consume_token(IS_FALSE);
+      fragment_PRIME();
+      break;
+    default:
+      jj_la1[13] = jj_gen;
+      jj_consume_token(-1);
+      throw new ParseException();
+    }
+  }
+
+  static final public void fragment_PRIME() throws ParseException {
+    expression();
+    fragment();
+    fragment_PRIME();
+  }
+
+  static final public void condition() throws ParseException {
+    switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+    case TILDA:
+      jj_consume_token(TILDA);
+      condition();
+      condition_PRIME();
+      break;
+    case OPEN_BRACKET:
+      jj_consume_token(OPEN_BRACKET);
+      condition();
+      jj_consume_token(CLOSE_BRACKET);
+      condition_PRIME();
+      break;
+    case MINUS_SIGN:
+    case ID:
+      expression();
+      comp_op();
+      expression();
+      condition_PRIME();
+      break;
+    default:
+      jj_la1[14] = jj_gen;
+      jj_consume_token(-1);
+      throw new ParseException();
+    }
+  }
+
+  static final public void condition_PRIME() throws ParseException {
+    switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+    case OR_SIGN:
+    case AND_SIGN:
+      switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+      case OR_SIGN:
+        jj_consume_token(OR_SIGN);
+        break;
+      case AND_SIGN:
+        jj_consume_token(AND_SIGN);
+        break;
+      default:
+        jj_la1[15] = jj_gen;
+        jj_consume_token(-1);
+        throw new ParseException();
+      }
+      condition();
+      condition_PRIME();
+      break;
+    default:
+      jj_la1[16] = jj_gen;
+      ;
+    }
+  }
+
+  static final public void comp_op() throws ParseException {
+    switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+    case EQUALS_SIGN:
+      jj_consume_token(EQUALS_SIGN);
+      break;
+    case NEGATION_EQUALS:
+      jj_consume_token(NEGATION_EQUALS);
+      break;
+    case LESS_THAN:
+      jj_consume_token(LESS_THAN);
+      break;
+    case EQUAL_LESS_THAN:
+      jj_consume_token(EQUAL_LESS_THAN);
+      break;
+    case GREATER_THAN:
+      jj_consume_token(GREATER_THAN);
+      break;
+    case EQUAL_GREATER_THAN:
+      jj_consume_token(EQUAL_GREATER_THAN);
+      break;
+    default:
+      jj_la1[17] = jj_gen;
+      jj_consume_token(-1);
+      throw new ParseException();
+    }
+  }
+
+  static final public void arg_list() throws ParseException {
+    switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+    case ID:
+      nemp_arg_list();
+      break;
+    default:
+      jj_la1[18] = jj_gen;
+      ;
+    }
+  }
+
+  static final public void nemp_arg_list() throws ParseException {
+    jj_consume_token(ID);
+    label_1:
+    while (true) {
+      switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+      case COMMA:
+        ;
+        break;
+      default:
+        jj_la1[19] = jj_gen;
+        break label_1;
+      }
+      jj_consume_token(COMMA);
+      jj_consume_token(ID);
+    }
+  }
+
+  static final public int BinOp() throws ParseException {
+    switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+    case PLUS_SIGN:
+      jj_consume_token(PLUS_SIGN);
+                      {if (true) return 1;}
+      break;
+    case MINUS_SIGN:
+      jj_consume_token(MINUS_SIGN);
+                         {if (true) return 2;}
+      break;
+    default:
+      jj_la1[20] = jj_gen;
+      jj_consume_token(-1);
+      throw new ParseException();
+    }
+    throw new Error("Missing return statement in function");
   }
 
   static private boolean jj_initialized_once = false;
@@ -80,7 +475,7 @@
   static public Token jj_nt;
   static private int jj_ntk;
   static private int jj_gen;
-  static final private int[] jj_la1 = new int[0];
+  static final private int[] jj_la1 = new int[21];
   static private int[] jj_la1_0;
   static private int[] jj_la1_1;
   static {
@@ -88,10 +483,10 @@
       jj_la1_init_1();
    }
    private static void jj_la1_init_0() {
-      jj_la1_0 = new int[] {};
+      jj_la1_0 = new int[] {0xa000,0xa000,0x214000,0x214000,0x0,0x0,0x8000000,0xc0000000,0x41c80,0x0,0x0,0x80000000,0x0,0x180000,0x80000000,0x0,0x0,0x0,0x0,0x8000000,0x0,};
    }
    private static void jj_la1_init_1() {
-      jj_la1_1 = new int[] {};
+      jj_la1_1 = new int[] {0x0,0x0,0x0,0x0,0x8004,0x8000,0x0,0x0,0x8000,0x4,0x6,0x8004,0x6,0x1000,0x800c,0x30,0x30,0xfc0,0x8000,0x0,0x6,};
    }
 
   /** Constructor with InputStream. */
@@ -112,7 +507,7 @@
     token = new Token();
     jj_ntk = -1;
     jj_gen = 0;
-    for (int i = 0; i < 0; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 21; i++) jj_la1[i] = -1;
   }
 
   /** Reinitialise. */
@@ -126,7 +521,7 @@
     token = new Token();
     jj_ntk = -1;
     jj_gen = 0;
-    for (int i = 0; i < 0; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 21; i++) jj_la1[i] = -1;
   }
 
   /** Constructor. */
@@ -143,7 +538,7 @@
     token = new Token();
     jj_ntk = -1;
     jj_gen = 0;
-    for (int i = 0; i < 0; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 21; i++) jj_la1[i] = -1;
   }
 
   /** Reinitialise. */
@@ -153,7 +548,7 @@
     token = new Token();
     jj_ntk = -1;
     jj_gen = 0;
-    for (int i = 0; i < 0; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 21; i++) jj_la1[i] = -1;
   }
 
   /** Constructor with generated Token Manager. */
@@ -169,7 +564,7 @@
     token = new Token();
     jj_ntk = -1;
     jj_gen = 0;
-    for (int i = 0; i < 0; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 21; i++) jj_la1[i] = -1;
   }
 
   /** Reinitialise. */
@@ -178,7 +573,7 @@
     token = new Token();
     jj_ntk = -1;
     jj_gen = 0;
-    for (int i = 0; i < 0; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 21; i++) jj_la1[i] = -1;
   }
 
   static private Token jj_consume_token(int kind) throws ParseException {
@@ -234,7 +629,7 @@
       la1tokens[jj_kind] = true;
       jj_kind = -1;
     }
-    for (int i = 0; i < 0; i++) {
+    for (int i = 0; i < 21; i++) {
       if (jj_la1[i] == jj_gen) {
         for (int j = 0; j < 32; j++) {
           if ((jj_la1_0[i] & (1<<j)) != 0) {

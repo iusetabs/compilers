@@ -247,9 +247,10 @@ void statement(): {}
 	| <DO_SKIP> <SEMICOLUMN>
 }
 
-void expression(): {}
+void expression(): {} //TODO FRAG CALL:: REPLACING ID
 {
-	(<MINUS_SIGN>)? <ID> ( ( fragment_PRIME() (binary_arith_op() fragment() )? ) | ( <OPEN_BRACKET> ( arg_list() | expression() ) <CLOSE_BRACKET> )  )
+	<ID> ( fragment() ( binary_arith_op() fragment() )? ) | ( <OPEN_BRACKET>  ( arg_list() | expression() ) <CLOSE_BRACKET> )
+ 	| <OPEN_BRACKET> ( arg_list() | expression() ) <CLOSE_BRACKET> 
 }
 
 void binary_arith_op(): {}
@@ -260,14 +261,19 @@ void binary_arith_op(): {}
 
 void fragment(): {} 
 {
-	<INTEGER> fragment_PRIME() 
+	<MINUS_SIGN> <ID> fragment_PRIME()
+	| <INTEGER> fragment_PRIME() 
 	| <IS_TRUE> fragment_PRIME()
 	| <IS_FALSE> fragment_PRIME()
+	| fragment_PRIME()
 }
 
 void fragment_PRIME(): {}
 {
-	expression() fragment() fragment_PRIME()
+	(binary_arith_op() fragment_PRIME() fragment_PRIME())?
+	| <OPEN_BRACKET> fragment_PRIME() <CLOSE_BRACKET>
+	| <ID> <OPEN_BRACKET> arg_list() <CLOSE_BRACKET> //TODO 274
+	| fragment_PRIME()  
 }
 
 void condition(): {}
