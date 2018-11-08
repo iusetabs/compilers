@@ -267,7 +267,7 @@ void fragment(): {}
 
 void fragment_PRIME(): {}
 {
-	expression() fragment() fragment_PRIME()
+	binary_arith_op() fragment() fragment_PRIME()
 }
 
 void condition(): {}
