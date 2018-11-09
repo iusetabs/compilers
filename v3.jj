@@ -304,7 +304,7 @@ void condition(): {}
 	( 
 		( <OR_SIGN> | <AND_SIGN> ) //Issue is being caused here by recursive issue. Issue between [...]* and the tilda condition. It doesn't know whether to traverse back up the recusive tree or continue the [...]* if the next token is "|" 
 		condition() 
-	)*  
+	)//TODO prove logical equivalence of (( OR | AND )c) and (( OR | AND )c)*   
 }
 
 void comp_op(): {}
