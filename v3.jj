@@ -247,24 +247,6 @@ void statement(): {}
 	| <DO_SKIP> <SEMICOLUMN>
 }
 
-/*void expression(): {}
-{
-	(<MINUS_SIGN>)? <ID> ( (binary_arith_op() fragment() )*  | ( <OPEN_BRACKET> ( arg_list() | expression() ) <CLOSE_BRACKET> )  )
-}
-
-void binary_arith_op(): {}
-{
-	<PLUS_SIGN> 
-	| <MINUS_SIGN> 
-}	
-
-void fragment(): {} 
-{
-	<INTEGER>  
-	| <IS_TRUE> 
-	| <IS_FALSE> 
-}*/
-
 void expression(): {}
 {
 	 (
@@ -295,7 +277,7 @@ void expression(): {}
 				)+ 
 			) 
 		 ) 
-	| <OPEN_BRACKET> expression() <CLOSE_BRACKET>
+	| <OPEN_BRACKET> expression() <CLOSE_BRACKET> //TODO: Prove logical equivalence
 }
 
 void binary_arith_op(): {}
@@ -306,9 +288,23 @@ void binary_arith_op(): {}
 
 void condition(): {}
 {
-	<TILDA> condition() (  ( ( <OR_SIGN> | <AND_SIGN> ) condition() condition_PRIME() )? ) 
-	| <OPEN_BRACKET> condition() <CLOSE_BRACKET> (  ( ( <OR_SIGN> | <AND_SIGN> ) condition() condition_PRIME() )? )
-	| expression() comp_op() expression() (  ( ( <OR_SIGN> | <AND_SIGN> ) condition() condition_PRIME() )? )  //TODO 281
+	( 
+		(//begin OR 
+			<TILDA> condition() 
+		) 
+		| 
+		( 
+			<OPEN_BRACKET> /*--going to cause conflict with expression last choice--*/ condition() <CLOSE_BRACKET> 
+		) 
+		| 
+		( 
+			expression() comp_op() expression() 
+		) //end OR
+	) 
+	( 
+		( <OR_SIGN> | <AND_SIGN> ) //Issue is being caused here by recursive issue. Issue between [...]* and the tilda condition. It doesn't know whether to traverse back up the recusive tree or continue the [...]* if the next token is "|" 
+		condition() 
+	)*  
 }
 
 void comp_op(): {}

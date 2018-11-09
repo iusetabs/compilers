@@ -265,23 +265,6 @@
     }
   }
 
-/*void expression(): {}
-{
-	(<MINUS_SIGN>)? <ID> ( (binary_arith_op() fragment() )*  | ( <OPEN_BRACKET> ( arg_list() | expression() ) <CLOSE_BRACKET> )  )
-}
-
-void binary_arith_op(): {}
-{
-	<PLUS_SIGN> 
-	| <MINUS_SIGN> 
-}	
-
-void fragment(): {} 
-{
-	<INTEGER>  
-	| <IS_TRUE> 
-	| <IS_FALSE> 
-}*/
   static final public void expression() throws ParseException {
     switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
     case IS_TRUE:
@@ -453,13 +436,11 @@ void fragment(): {}
     case TILDA:
       jj_consume_token(TILDA);
       condition();
-      condition_PRIME();
       break;
     case OPEN_BRACKET:
       jj_consume_token(OPEN_BRACKET);
       condition();
       jj_consume_token(CLOSE_BRACKET);
-      condition_PRIME();
       break;
     case IS_TRUE:
     case IS_FALSE:
@@ -469,19 +450,23 @@ void fragment(): {}
       expression();
       comp_op();
       expression();
-      condition_PRIME();
       break;
     default:
       jj_la1[20] = jj_gen;
       jj_consume_token(-1);
       throw new ParseException();
     }
-  }
-
-  static final public void condition_PRIME() throws ParseException {
-    switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-    case OR_SIGN:
-    case AND_SIGN:
+    label_3:
+    while (true) {
+      switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+      case OR_SIGN:
+      case AND_SIGN:
+        ;
+        break;
+      default:
+        jj_la1[21] = jj_gen;
+        break label_3;
+      }
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
       case OR_SIGN:
         jj_consume_token(OR_SIGN);
@@ -490,16 +475,11 @@ void fragment(): {}
         jj_consume_token(AND_SIGN);
         break;
       default:
-        jj_la1[21] = jj_gen;
+        jj_la1[22] = jj_gen;
         jj_consume_token(-1);
         throw new ParseException();
       }
       condition();
-      condition_PRIME();
-      break;
-    default:
-      jj_la1[22] = jj_gen;
-      ;
     }
   }
 
@@ -543,7 +523,7 @@ void fragment(): {}
 
   static final public void nemp_arg_list() throws ParseException {
     jj_consume_token(ID);
-    label_3:
+    label_4:
     while (true) {
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
       case COMMA:
@@ -551,7 +531,7 @@ void fragment(): {}
         break;
       default:
         jj_la1[25] = jj_gen;
-        break label_3;
+        break label_4;
       }
       jj_consume_token(COMMA);
       jj_consume_token(ID);
