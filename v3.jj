@@ -267,19 +267,6 @@ void fragment(): {}
 
 void expression(): {}
 {
-/*	(
-		(
-			(<MINUS_SIGN>)? <ID> | <INTEGER> | <IS_TRUE> | <IS_FALSE> 
-		)
-		(	
-			binary_arith_op() 
-			(
-				(<MINUS_SIGN>)? <ID> | <INTEGER> | <IS_TRUE> | <IS_FALSE>
-			)
-		)+
-	)
-	| ( <ID> <OPEN_BRACKET> arg_list() | <OPEN_BRACKET> expression() ) <CLOSE_BRACKET>*/
-
 	 (
                 (
                         <MINUS_SIGN> <ID> | <INTEGER> | <IS_TRUE> | <IS_FALSE>
@@ -319,14 +306,9 @@ void binary_arith_op(): {}
 
 void condition(): {}
 {
-	<TILDA> condition() condition_PRIME()
-	| <OPEN_BRACKET> condition() <CLOSE_BRACKET> condition_PRIME()
-	| expression() comp_op() expression() condition_PRIME() //TODO 281
-}
-
-void condition_PRIME(): {}
-{
-	( ( <OR_SIGN> | <AND_SIGN> ) condition() condition_PRIME() )?
+	<TILDA> condition() (  ( ( <OR_SIGN> | <AND_SIGN> ) condition() condition_PRIME() )? ) 
+	| <OPEN_BRACKET> condition() <CLOSE_BRACKET> (  ( ( <OR_SIGN> | <AND_SIGN> ) condition() condition_PRIME() )? )
+	| expression() comp_op() expression() (  ( ( <OR_SIGN> | <AND_SIGN> ) condition() condition_PRIME() )? )  //TODO 281
 }
 
 void comp_op(): {}
