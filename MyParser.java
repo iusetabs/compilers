@@ -431,81 +431,67 @@
     }
   }
 
-/*void condition(): {}
-{
-        (
-                (//begin OR 
-                        <TILDA> condition()
-                )
-                |
-                (
-                        <OPEN_BRACKET> --going to cause conflict with expression last choice-- condition() <CLOSE_BRACKET>
-                )
-                |
-                (
-                        expression() comp_op() expression()
-                ) //end OR
-        )
-        (
-                ( <OR_SIGN> | <AND_SIGN> ) //Issue is being caused here by recursive issue. Issue between [...]* and the tilda condition. It doesn't know whether to traverse back up the recusive tree or continue the [...]* if the next token is "|" 
-                condition()
-        )//TODO prove logical equivalence of (( OR | AND )c) and (( OR | AND )c)*   
-}*/
   static final public void condition() throws ParseException {
     switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-    case OPEN_BRACKET:
-      jj_consume_token(OPEN_BRACKET);
-      switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-      case TILDA:
-        jj_consume_token(TILDA);
-        break;
-      default:
-        jj_la1[20] = jj_gen;
-        ;
-      }
-      expression();
-      comp_op();
-      expression();
-      jj_consume_token(CLOSE_BRACKET);
-      break;
-    case IS_TRUE:
-    case IS_FALSE:
-    case MINUS_SIGN:
     case TILDA:
-    case INTEGER:
-    case ID:
-      switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-      case TILDA:
-        jj_consume_token(TILDA);
-        break;
-      default:
-        jj_la1[21] = jj_gen;
-        ;
-      }
-      expression();
-      comp_op();
-      expression();
-      switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-      case OR_SIGN:
-        jj_consume_token(OR_SIGN);
-        break;
-      case AND_SIGN:
-        jj_consume_token(AND_SIGN);
-        break;
-      default:
-        jj_la1[22] = jj_gen;
-        jj_consume_token(-1);
-        throw new ParseException();
-      }
+      jj_consume_token(TILDA);
       condition();
       break;
     default:
-      jj_la1[23] = jj_gen;
+      jj_la1[20] = jj_gen;
+      if (jj_2_1(2)) {
+        jj_consume_token(OPEN_BRACKET);
+        condition();
+        jj_consume_token(CLOSE_BRACKET);
+      } else {
+        switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+        case IS_TRUE:
+        case IS_FALSE:
+        case OPEN_BRACKET:
+        case MINUS_SIGN:
+        case INTEGER:
+        case ID:
+          expression();
+          comp_op();
+          expression();
+          break;
+        default:
+          jj_la1[21] = jj_gen;
+          jj_consume_token(-1);
+          throw new ParseException();
+        }
+      }
+    }
+    switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+    case OR_SIGN:
+      jj_consume_token(OR_SIGN);
+      break;
+    case AND_SIGN:
+      jj_consume_token(AND_SIGN);
+      break;
+    default:
+      jj_la1[22] = jj_gen;
       jj_consume_token(-1);
       throw new ParseException();
     }
+    condition();
   }
 
+/*void condition(): {}
+{
+	( 
+		( 
+			(<OPEN_BRACKET> --going to cause conflict with expression last choice--
+				( (<TILDA>)? expression() comp_op() expression() )
+			<CLOSE_BRACKET>)
+		)
+		|
+		(
+			( <TILDA>)? expression() comp_op() expression() )
+		( <OR_SIGN> | <AND_SIGN> ) //Issue is being caused here by recursive issue. Issue between [...]* and the tilda condition. It doesn't know whether to traverse back up the recusive tree or continue the [...]* if the next token is "|" 
+		condition() 
+	)//TODO prove logical equivalence of (( OR | AND )c) and (( OR | AND )c)*   
+}*/
   static final public void comp_op() throws ParseException {
     switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
     case EQUALS_SIGN:
@@ -527,7 +513,7 @@
       jj_consume_token(EQUAL_GREATER_THAN);
       break;
     default:
-      jj_la1[24] = jj_gen;
+      jj_la1[23] = jj_gen;
       jj_consume_token(-1);
       throw new ParseException();
     }
@@ -539,7 +525,7 @@
       nemp_arg_list();
       break;
     default:
-      jj_la1[25] = jj_gen;
+      jj_la1[24] = jj_gen;
       ;
     }
   }
@@ -553,7 +539,7 @@
         ;
         break;
       default:
-        jj_la1[26] = jj_gen;
+        jj_la1[25] = jj_gen;
         break label_3;
       }
       jj_consume_token(COMMA);
@@ -572,11 +558,91 @@
                          {if (true) return 2;}
       break;
     default:
-      jj_la1[27] = jj_gen;
+      jj_la1[26] = jj_gen;
       jj_consume_token(-1);
       throw new ParseException();
     }
     throw new Error("Missing return statement in function");
+  }
+
+  static private boolean jj_2_1(int xla) {
+    jj_la = xla; jj_lastpos = jj_scanpos = token;
+    try { return !jj_3_1(); }
+    catch(LookaheadSuccess ls) { return true; }
+    finally { jj_save(0, xla); }
+  }
+
+  static private boolean jj_3R_9() {
+    if (jj_scan_token(ID)) return true;
+    return false;
+  }
+
+  static private boolean jj_3R_6() {
+    if (jj_3R_7()) return true;
+    return false;
+  }
+
+  static private boolean jj_3R_10() {
+    if (jj_scan_token(OPEN_BRACKET)) return true;
+    return false;
+  }
+
+  static private boolean jj_3_1() {
+    if (jj_scan_token(OPEN_BRACKET)) return true;
+    if (jj_3R_4()) return true;
+    return false;
+  }
+
+  static private boolean jj_3R_5() {
+    if (jj_scan_token(TILDA)) return true;
+    return false;
+  }
+
+  static private boolean jj_3R_7() {
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_3R_8()) {
+    jj_scanpos = xsp;
+    if (jj_3R_9()) {
+    jj_scanpos = xsp;
+    if (jj_3R_10()) return true;
+    }
+    }
+    return false;
+  }
+
+  static private boolean jj_3R_8() {
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_3R_11()) {
+    jj_scanpos = xsp;
+    if (jj_scan_token(44)) {
+    jj_scanpos = xsp;
+    if (jj_scan_token(19)) {
+    jj_scanpos = xsp;
+    if (jj_scan_token(20)) return true;
+    }
+    }
+    }
+    return false;
+  }
+
+  static private boolean jj_3R_11() {
+    if (jj_scan_token(MINUS_SIGN)) return true;
+    return false;
+  }
+
+  static private boolean jj_3R_4() {
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_3R_5()) {
+    jj_scanpos = xsp;
+    if (jj_3_1()) {
+    jj_scanpos = xsp;
+    if (jj_3R_6()) return true;
+    }
+    }
+    return false;
   }
 
   static private boolean jj_initialized_once = false;
@@ -588,8 +654,10 @@
   /** Next token. */
   static public Token jj_nt;
   static private int jj_ntk;
+  static private Token jj_scanpos, jj_lastpos;
+  static private int jj_la;
   static private int jj_gen;
-  static final private int[] jj_la1 = new int[28];
+  static final private int[] jj_la1 = new int[27];
   static private int[] jj_la1_0;
   static private int[] jj_la1_1;
   static {
@@ -597,11 +665,14 @@
       jj_la1_init_1();
    }
    private static void jj_la1_init_0() {
-      jj_la1_0 = new int[] {0xa000,0xa000,0x214000,0x214000,0x80180000,0x0,0x8000000,0xc0000000,0x41c80,0x180000,0x0,0x180000,0x0,0x180000,0x0,0x180000,0x0,0x80180000,0x80180000,0x0,0x0,0x0,0x0,0x80180000,0x0,0x0,0x8000000,0x0,};
+      jj_la1_0 = new int[] {0xa000,0xa000,0x214000,0x214000,0x80180000,0x0,0x8000000,0xc0000000,0x41c80,0x180000,0x0,0x180000,0x0,0x180000,0x0,0x180000,0x0,0x80180000,0x80180000,0x0,0x0,0x80180000,0x0,0x0,0x0,0x8000000,0x0,};
    }
    private static void jj_la1_init_1() {
-      jj_la1_1 = new int[] {0x0,0x0,0x0,0x0,0x9004,0x8000,0x0,0x0,0x8000,0x1004,0x4,0x9004,0x6,0x1000,0x4,0x9004,0x6,0x1000,0x9004,0x6,0x8,0x8,0x30,0x900c,0xfc0,0x8000,0x0,0x6,};
+      jj_la1_1 = new int[] {0x0,0x0,0x0,0x0,0x9004,0x8000,0x0,0x0,0x8000,0x1004,0x4,0x9004,0x6,0x1000,0x4,0x9004,0x6,0x1000,0x9004,0x6,0x8,0x9004,0x30,0xfc0,0x8000,0x0,0x6,};
    }
+  static final private JJCalls[] jj_2_rtns = new JJCalls[1];
+  static private boolean jj_rescan = false;
+  static private int jj_gc = 0;
 
   /** Constructor with InputStream. */
   public MyParser(java.io.InputStream stream) {
@@ -621,7 +692,8 @@
     token = new Token();
     jj_ntk = -1;
     jj_gen = 0;
-    for (int i = 0; i < 28; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 27; i++) jj_la1[i] = -1;
+    for (int i = 0; i < jj_2_rtns.length; i++) jj_2_rtns[i] = new JJCalls();
   }
 
   /** Reinitialise. */
@@ -635,7 +707,8 @@
     token = new Token();
     jj_ntk = -1;
     jj_gen = 0;
-    for (int i = 0; i < 28; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 27; i++) jj_la1[i] = -1;
+    for (int i = 0; i < jj_2_rtns.length; i++) jj_2_rtns[i] = new JJCalls();
   }
 
   /** Constructor. */
@@ -652,7 +725,8 @@
     token = new Token();
     jj_ntk = -1;
     jj_gen = 0;
-    for (int i = 0; i < 28; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 27; i++) jj_la1[i] = -1;
+    for (int i = 0; i < jj_2_rtns.length; i++) jj_2_rtns[i] = new JJCalls();
   }
 
   /** Reinitialise. */
@@ -662,7 +736,8 @@
     token = new Token();
     jj_ntk = -1;
     jj_gen = 0;
-    for (int i = 0; i < 28; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 27; i++) jj_la1[i] = -1;
+    for (int i = 0; i < jj_2_rtns.length; i++) jj_2_rtns[i] = new JJCalls();
   }
 
   /** Constructor with generated Token Manager. */
@@ -678,7 +753,8 @@
     token = new Token();
     jj_ntk = -1;
     jj_gen = 0;
-    for (int i = 0; i < 28; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 27; i++) jj_la1[i] = -1;
+    for (int i = 0; i < jj_2_rtns.length; i++) jj_2_rtns[i] = new JJCalls();
   }
 
   /** Reinitialise. */
@@ -687,7 +763,8 @@
     token = new Token();
     jj_ntk = -1;
     jj_gen = 0;
-    for (int i = 0; i < 28; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 27; i++) jj_la1[i] = -1;
+    for (int i = 0; i < jj_2_rtns.length; i++) jj_2_rtns[i] = new JJCalls();
   }
 
   static private Token jj_consume_token(int kind) throws ParseException {
@@ -697,11 +774,44 @@
     jj_ntk = -1;
     if (token.kind == kind) {
       jj_gen++;
+      if (++jj_gc > 100) {
+        jj_gc = 0;
+        for (int i = 0; i < jj_2_rtns.length; i++) {
+          JJCalls c = jj_2_rtns[i];
+          while (c != null) {
+            if (c.gen < jj_gen) c.first = null;
+            c = c.next;
+          }
+        }
+      }
       return token;
     }
     token = oldToken;
     jj_kind = kind;
     throw generateParseException();
+  }
+
+  static private final class LookaheadSuccess extends java.lang.Error { }
+  static final private LookaheadSuccess jj_ls = new LookaheadSuccess();
+  static private boolean jj_scan_token(int kind) {
+    if (jj_scanpos == jj_lastpos) {
+      jj_la--;
+      if (jj_scanpos.next == null) {
+        jj_lastpos = jj_scanpos = jj_scanpos.next = token_source.getNextToken();
+      } else {
+        jj_lastpos = jj_scanpos = jj_scanpos.next;
+      }
+    } else {
+      jj_scanpos = jj_scanpos.next;
+    }
+    if (jj_rescan) {
+      int i = 0; Token tok = token;
+      while (tok != null && tok != jj_scanpos) { i++; tok = tok.next; }
+      if (tok != null) jj_add_error_token(kind, i);
+    }
+    if (jj_scanpos.kind != kind) return true;
+    if (jj_la == 0 && jj_scanpos == jj_lastpos) throw jj_ls;
+    return false;
   }
 
 
@@ -734,6 +844,36 @@
   static private java.util.List<int[]> jj_expentries = new java.util.ArrayList<int[]>();
   static private int[] jj_expentry;
   static private int jj_kind = -1;
+  static private int[] jj_lasttokens = new int[100];
+  static private int jj_endpos;
+
+  static private void jj_add_error_token(int kind, int pos) {
+    if (pos >= 100) return;
+    if (pos == jj_endpos + 1) {
+      jj_lasttokens[jj_endpos++] = kind;
+    } else if (jj_endpos != 0) {
+      jj_expentry = new int[jj_endpos];
+      for (int i = 0; i < jj_endpos; i++) {
+        jj_expentry[i] = jj_lasttokens[i];
+      }
+      boolean exists = false;
+      for (java.util.Iterator<?> it = jj_expentries.iterator(); it.hasNext();) {
+        exists = true;
+        int[] oldentry = (int[])(it.next());
+        if (oldentry.length == jj_expentry.length) {
+          for (int i = 0; i < jj_expentry.length; i++) {
+            if (oldentry[i] != jj_expentry[i]) {
+              exists = false;
+              break;
+            }
+          }
+          if (exists) break;
+        }
+      }
+      if (!exists) jj_expentries.add(jj_expentry);
+      if (pos != 0) jj_lasttokens[(jj_endpos = pos) - 1] = kind;
+    }
+  }
 
   /** Generate ParseException. */
   static public ParseException generateParseException() {
@@ -743,7 +883,7 @@
       la1tokens[jj_kind] = true;
       jj_kind = -1;
     }
-    for (int i = 0; i < 28; i++) {
+    for (int i = 0; i < 27; i++) {
       if (jj_la1[i] == jj_gen) {
         for (int j = 0; j < 32; j++) {
           if ((jj_la1_0[i] & (1<<j)) != 0) {
@@ -762,6 +902,9 @@
         jj_expentries.add(jj_expentry);
       }
     }
+    jj_endpos = 0;
+    jj_rescan_token();
+    jj_add_error_token(0, 0);
     int[][] exptokseq = new int[jj_expentries.size()][];
     for (int i = 0; i < jj_expentries.size(); i++) {
       exptokseq[i] = jj_expentries.get(i);
@@ -775,6 +918,41 @@
 
   /** Disable tracing. */
   static final public void disable_tracing() {
+  }
+
+  static private void jj_rescan_token() {
+    jj_rescan = true;
+    for (int i = 0; i < 1; i++) {
+    try {
+      JJCalls p = jj_2_rtns[i];
+      do {
+        if (p.gen > jj_gen) {
+          jj_la = p.arg; jj_lastpos = jj_scanpos = p.first;
+          switch (i) {
+            case 0: jj_3_1(); break;
+          }
+        }
+        p = p.next;
+      } while (p != null);
+      } catch(LookaheadSuccess ls) { }
+    }
+    jj_rescan = false;
+  }
+
+  static private void jj_save(int index, int xla) {
+    JJCalls p = jj_2_rtns[index];
+    while (p.gen > jj_gen) {
+      if (p.next == null) { p = p.next = new JJCalls(); break; }
+      p = p.next;
+    }
+    p.gen = jj_gen + xla - jj_la; p.first = token; p.arg = xla;
+  }
+
+  static final class JJCalls {
+    int gen;
+    Token first;
+    int arg;
+    JJCalls next;
   }
 
         }
