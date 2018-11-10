@@ -431,6 +431,26 @@
     }
   }
 
+/*void condition(): {}
+{
+        (
+                (//begin OR 
+                        <TILDA> condition()
+                )
+                |
+                (
+                        <OPEN_BRACKET> --going to cause conflict with expression last choice-- condition() <CLOSE_BRACKET>
+                )
+                |
+                (
+                        expression() comp_op() expression()
+                ) //end OR
+        )
+        (
+                ( <OR_SIGN> | <AND_SIGN> ) //Issue is being caused here by recursive issue. Issue between [...]* and the tilda condition. It doesn't know whether to traverse back up the recusive tree or continue the [...]* if the next token is "|" 
+                condition()
+        )//TODO prove logical equivalence of (( OR | AND )c) and (( OR | AND )c)*   
+}*/
   static final public void condition() throws ParseException {
     switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
     case OPEN_BRACKET:
