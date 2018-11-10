@@ -288,6 +288,7 @@ void binary_arith_op(): {}
 
 void condition(): {}
 {
+	( 
 		( 
 			(<OPEN_BRACKET> /*--going to cause conflict with expression last choice--*/ 
 				( (<TILDA>)? expression() comp_op() expression() )
@@ -295,48 +296,10 @@ void condition(): {}
 		)
 		|
 		(
-			//( (<TILDA>)? TODO re-insert 
-				(//begin re-write of expression here
-					<OPEN_BRACKET> 
-						( expression() <CLOSE_BRACKET> 	
-						| 
-						        (
-						        	(
-						                        <MINUS_SIGN> <ID> | <INTEGER> | <IS_TRUE> | <IS_FALSE>
-						                )
-						                (
-						                        binary_arith_op()
-						                        (
-						                                (<MINUS_SIGN>)? <ID> | <INTEGER> | <IS_TRUE> | <IS_FALSE>
-						                        )
-						                )+
-						        )
-						        |  <ID>
-						           (//start OR 
-						           	(
-						                	<OPEN_BRACKET> arg_list() <CLOSE_BRACKET>
-						                )
-						                |
-						                (
-						                	(
-							                	<INTEGER> | <IS_TRUE> | <IS_FALSE>
-						                        )
-						                        ( binary_arith_op()
-					                        	(
-					                                	(<MINUS_SIGN>)? <ID> | <INTEGER> | <IS_TRUE> | <IS_FALSE>
-					                                )
-					                        )+
-					                )
-					          )
-					)
-				)
-		//	)
-			comp_op() expression()
-		) 
-		( 
-			( <OR_SIGN> | <AND_SIGN> ) //Issue is being caused here by recursive issue. Issue between [...]* and the tilda condition. It doesn't know whether to traverse back up the recusive tree or continue the [...]* if the next token is "|" 
-			condition() 
-		)//TODO prove logical equivalence of (( OR | AND )c) and (( OR | AND )c)*   
+			( <TILDA>)? expression() comp_op() expression() )
+		( <OR_SIGN> | <AND_SIGN> ) //Issue is being caused here by recursive issue. Issue between [...]* and the tilda condition. It doesn't know whether to traverse back up the recusive tree or continue the [...]* if the next token is "|" 
+		condition() 
+	)//TODO prove logical equivalence of (( OR | AND )c) and (( OR | AND )c)*   
 }
 
 void comp_op(): {}
