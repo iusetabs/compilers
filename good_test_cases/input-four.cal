@@ -3,8 +3,8 @@ variable i : integer;
 integer test_fn(x: integer) is
 	variable i: integer;
 begin
-	i := -0;
-	return (1 + (2 + (3 + 4)));
+	i := 0;
+	return 1 + (2 + (3 + 4));
 end
 
 main 

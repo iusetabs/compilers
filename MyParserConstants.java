@@ -79,13 +79,11 @@ public interface MyParserConstants {
   /** RegularExpression Id. */
   int INTEGER = 44;
   /** RegularExpression Id. */
-  int INVALID_INTEGER = 45;
+  int DIGIT = 45;
   /** RegularExpression Id. */
-  int DIGIT = 46;
+  int ID = 46;
   /** RegularExpression Id. */
-  int ID = 47;
-  /** RegularExpression Id. */
-  int LETTER = 48;
+  int LETTER = 47;
 
   /** Lexical state. */
   int DEFAULT = 0;
@@ -139,7 +137,6 @@ public interface MyParserConstants {
     "\">\"",
     "\">=\"",
     "<INTEGER>",
-    "<INVALID_INTEGER>",
     "<DIGIT>",
     "<ID>",
     "<LETTER>",
