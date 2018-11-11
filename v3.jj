@@ -52,7 +52,7 @@ PARSER_BEGIN(MyParser)
 				System.out.println(e.getMessage());
 				System.out.println("SLP Interpreter: Encountered errors during parse");
 			}
-			for (Token t = getNextToken(); t.kind!=EOF; t = getNextToken()) {
+			/*for (Token t = getNextToken(); t.kind!=EOF; t = getNextToken()) {
 				// Print out the actual text for the constants, identifiers etc.
 				if (t.kind==INTEGER)
 				{
@@ -70,7 +70,7 @@ PARSER_BEGIN(MyParser)
 					System.out.print("( Kind: " + t.kind + " Image: " + t.image + " ");
 					System.out.println("Token: " + token + ")");
 				}
-			} 
+			} */
 		}
 	}
 PARSER_END(MyParser) 
@@ -213,7 +213,7 @@ void func_list(): {}
 
 void function(): {}
 {
-	type() <ID> parameter_list() <IS> decl_list() <BEGIN> statement_block() <RETURN> (expression())? <END>
+	type() <ID> <OPEN_BRACKET> parameter_list() <CLOSE_BRACKET> <IS> decl_list() <BEGIN> statement_block() <RETURN> (expression())? <SEMICOLUMN><END>
 
 }
 
@@ -234,7 +234,7 @@ void main() : {}
 
 void statement_block(): {}
 {
-	statement() statement_block()
+	( statement() statement_block() )?
 }
 
 void statement(): {}
@@ -258,7 +258,7 @@ void expression(): {}
                         (
                                 (<MINUS_SIGN>)? <ID> | <INTEGER> | <IS_TRUE> | <IS_FALSE>
                         )
-                )+
+                )*
         )
 	|  <ID> 
 		(//start OR 
@@ -276,7 +276,7 @@ void expression(): {}
 					) 
 				)+ 
 			) 
-		 ) 
+		 )? 
 	| <OPEN_BRACKET> expression() <CLOSE_BRACKET> //TODO: Prove logical equivalence
 }
 
