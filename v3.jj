@@ -48,8 +48,10 @@ PARSER_BEGIN(MyParser)
 			*/
 			try {
 				tokeniser.Prog();
+				System.out.println("Success");
 			}catch(ParseException e) {
 				System.out.println(e.getMessage());
+				System.out.println("Failure");
 				System.out.println("SLP Interpreter: Encountered errors during parse");
 			}
 			/*for (Token t = getNextToken(); t.kind!=EOF; t = getNextToken()) {
@@ -254,9 +256,10 @@ void expression(): {}
                 )
                 (
                         binary_arith_op()
-                        (
+                        ((
                                 (<MINUS_SIGN>)? <ID> | <INTEGER> | <IS_TRUE> | <IS_FALSE>
                         )
+			| <OPEN_BRACKET> expression() <CLOSE_BRACKET>)
                 )*
         )
 	|  <ID> 
@@ -270,9 +273,11 @@ void expression(): {}
 				<INTEGER> | <IS_TRUE> | <IS_FALSE> 
 				)? 
 				( binary_arith_op() 
-					( 
+					(( 
 						(<MINUS_SIGN>)? <ID> | <INTEGER> | <IS_TRUE> | <IS_FALSE> 
 					) 
+					| <OPEN_BRACKET> expression() <CLOSE_BRACKET>
+					)
 				)+ 
 			) 
 		 )? 
