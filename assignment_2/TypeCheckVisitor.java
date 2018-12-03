@@ -5,6 +5,7 @@ public class TypeCheckVisitor implements MyParserVisitor
 	{
 		throw new RuntimeException("Visit SimpleNode");
 	}
+
 	public Object visit(ASTprogram node, Object data)
 	{
 		node.jjtGetChild(0).jjtAccept(this, data);

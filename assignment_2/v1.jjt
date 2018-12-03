@@ -35,9 +35,8 @@ PARSER_BEGIN(MyParser)
 
 		public static void main (String [] args) throws ParseException, FileNotFoundException { 
 			String t1; 
-			String t2;
+			STC t2;
 
-			MyParser tokeniser;
 
 			if ( args.length < 1){
 				System.out.println("Cannot read from standard i/o....");
@@ -45,8 +44,8 @@ PARSER_BEGIN(MyParser)
 				return;
 			}else if (args.length == 1){
 				try{
-					tokeniser = new MyParser(new java.io.FileInputStream(args[0]));
-					SimpleNode root = tokeniser.program(); //First node. Parse SS and store in "root".
+					MyParser tokeniser = new MyParser(new java.io.FileInputStream(args[0]));
+					SimpleNode root = tokeniser.Prog(); //First node. Parse SS and store in "root".
 					
 					System.out.println("\nProgram: ");
 					PrintVisitor pv = new PrintVisitor();
@@ -169,9 +168,9 @@ TOKEN : /*---IDENTIFIERS---*/ {
 |___________________________|
 */
 
-void Prog() : {}
+SimpleNode Prog() : {}
 {
-	decl_list() func_list() main() <EOF> 
+	decl_list() func_list() main() <EOF> {return jjtThis;} 
 }
 
 void decl_list() : {}

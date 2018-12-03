@@ -9,9 +9,8 @@
 
                 public static void main (String [] args) throws ParseException, FileNotFoundException {
                         String t1;
-                        String t2;
+                        STC t2;
 
-                        MyParser tokeniser;
 
                         if ( args.length < 1){
                                 System.out.println("Cannot read from standard i/o....");
@@ -19,8 +18,8 @@
                                 return;
                         }else if (args.length == 1){
                                 try{
-                                        tokeniser = new MyParser(new java.io.FileInputStream(args[0]));
-                                        SimpleNode root = tokeniser.program(); //First node. Parse SS and store in "root".
+                                        MyParser tokeniser = new MyParser(new java.io.FileInputStream(args[0]));
+                                        SimpleNode root = tokeniser.Prog(); //First node. Parse SS and store in "root".
 
                                         System.out.println("\u005cnProgram: ");
                                         PrintVisitor pv = new PrintVisitor();
@@ -51,8 +50,8 @@
 |       GRAMMAR RULES       |
 |___________________________|
 */
-  static final public void Prog() throws ParseException {
-               /*@bgen(jjtree) Prog */
+  static final public SimpleNode Prog() throws ParseException {
+                     /*@bgen(jjtree) Prog */
   ASTProg jjtn000 = new ASTProg(JJTPROG);
   boolean jjtc000 = true;
   jjtree.openNodeScope(jjtn000);
@@ -61,6 +60,9 @@
       func_list();
       main();
       jj_consume_token(0);
+                                               jjtree.closeNodeScope(jjtn000, true);
+                                               jjtc000 = false;
+                                              {if (true) return jjtn000;}
     } catch (Throwable jjte000) {
           if (jjtc000) {
             jjtree.clearNodeScope(jjtn000);
@@ -80,6 +82,7 @@
             jjtree.closeNodeScope(jjtn000, true);
           }
     }
+    throw new Error("Missing return statement in function");
   }
 
   static final public void decl_list() throws ParseException {
@@ -1039,6 +1042,19 @@
     finally { jj_save(1, xla); }
   }
 
+  static private boolean jj_3R_4() {
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_3R_5()) {
+    jj_scanpos = xsp;
+    if (jj_3_1()) {
+    jj_scanpos = xsp;
+    if (jj_3R_6()) return true;
+    }
+    }
+    return false;
+  }
+
   static private boolean jj_3_2() {
     Token xsp;
     xsp = jj_scanpos;
@@ -1191,19 +1207,6 @@
     if (jj_scan_token(19)) {
     jj_scanpos = xsp;
     if (jj_scan_token(20)) return true;
-    }
-    }
-    return false;
-  }
-
-  static private boolean jj_3R_4() {
-    Token xsp;
-    xsp = jj_scanpos;
-    if (jj_3R_5()) {
-    jj_scanpos = xsp;
-    if (jj_3_1()) {
-    jj_scanpos = xsp;
-    if (jj_3R_6()) return true;
     }
     }
     return false;

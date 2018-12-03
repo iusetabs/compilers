@@ -39,9 +39,8 @@ PARSER_BEGIN(MyParser)
 
 		public static void main (String [] args) throws ParseException, FileNotFoundException { 
 			String t1; 
-			String t2;
+			STC t2;
 
-			MyParser tokeniser;
 
 			if ( args.length < 1){
 				System.out.println("Cannot read from standard i/o....");
@@ -49,8 +48,8 @@ PARSER_BEGIN(MyParser)
 				return;
 			}else if (args.length == 1){
 				try{
-					tokeniser = new MyParser(new java.io.FileInputStream(args[0]));
-					SimpleNode root = tokeniser.program(); //First node. Parse SS and store in "root".
+					MyParser tokeniser = new MyParser(new java.io.FileInputStream(args[0]));
+					SimpleNode root = tokeniser.Prog(); //First node. Parse SS and store in "root".
 					
 					System.out.println("\nProgram: ");
 					PrintVisitor pv = new PrintVisitor();
@@ -173,7 +172,7 @@ TOKEN : /*---IDENTIFIERS---*/ {
 |___________________________|
 */
 
-void Prog() : {/*@bgen(jjtree) Prog */
+SimpleNode Prog() : {/*@bgen(jjtree) Prog */
   ASTProg jjtn000 = new ASTProg(JJTPROG);
   boolean jjtc000 = true;
   jjtree.openNodeScope(jjtn000);
@@ -182,6 +181,11 @@ void Prog() : {/*@bgen(jjtree) Prog */
         try {
 /*@egen*/
 	decl_list() func_list() main() <EOF>/*@bgen(jjtree)*/
+                                             {
+                                               jjtree.closeNodeScope(jjtn000, true);
+                                               jjtc000 = false;
+                                             }
+/*@egen*/ {return jjtn000;}/*@bgen(jjtree)*/
         } catch (Throwable jjte000) {
           if (jjtc000) {
             jjtree.clearNodeScope(jjtn000);

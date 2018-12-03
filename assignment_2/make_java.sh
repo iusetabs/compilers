@@ -1,1 +1,3 @@
-javac DataType.java PrintVisitor.java STC.java TypeCheckVisitor.java 
+jjtree v1.jjt
+javacc v1.jj
+javac *.java
