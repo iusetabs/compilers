@@ -29,9 +29,10 @@ PARSER_BEGIN(MyParser)
 	import java.io.*;
 	import java.util.*;
 
-	public static Hashtable ST = new Hashtable(); 
-
 	public class MyParser{
+
+		public static Hashtable ST = new Hashtable(); 
+
 		public static void main (String [] args) throws ParseException, FileNotFoundException { 
 			String t1; 
 			String t2;

@@ -1,8 +1,8 @@
 public enum DataType
 {
-Program,
-Declaration,
-TypeUnknown,
-TypeInteger,
-TypeBoolean
+	Program,
+	Declaration,
+	TypeUnknown,
+	TypeInteger,
+	TypeBoolean
 }
