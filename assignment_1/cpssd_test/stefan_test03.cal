@@ -1,0 +1,7 @@
+main
+begin
+  constant a : integer := 123;
+  while a = 321
+  begin
+  end
+end

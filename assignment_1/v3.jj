@@ -36,43 +36,20 @@ PARSER_BEGIN(MyParser)
 			}
 			else{
 				
-				System.out.println("SLP Tokeniser: Usage is one of:");
-				System.out.println("java SLPTokeniser < inputfile");
+				System.out.println("MyParser: Usage is one of:");
+				System.out.println("java MyParser < inputfile");
 				System.out.println("OR");
-				System.out.println("java SLPTokeniser inputfile");
+				System.out.println("java MyParser inputfile");
 				return;
 			}
-			/*
-			* We’ve now initialised the tokeniser to read from the appropriate place,
-			* so just keep reading tokens and printing them until we hit EOF
-			*/
 			try {
 				tokeniser.Prog();
-				System.out.println("Success");
+				System.out.println("MyParser: Success");
 			}catch(ParseException e) {
 				System.out.println(e.getMessage());
-				System.out.println("Failure");
-				System.out.println("SLP Interpreter: Encountered errors during parse");
+				System.out.println("MyParser: Failure");
+				System.out.println("MyParser: Encountered errors during parse");
 			}
-			/*for (Token t = getNextToken(); t.kind!=EOF; t = getNextToken()) {
-				// Print out the actual text for the constants, identifiers etc.
-				if (t.kind==INTEGER)
-				{
-					System.out.print("Integer");
-					System.out.print("( Kind: " + t.kind + " Image: " + t.image + " ");
-					System.out.println("Token: " + token + ")");
-				}
-				else if (t.kind==ID)
-				{
-					System.out.print("Identifier");
-					System.out.print("( Kind: " + t.kind + " Image: " + t.image + " ");
-					System.out.println("Token: " + token + ")");
-				}
-				else{
-					System.out.print("( Kind: " + t.kind + " Image: " + t.image + " ");
-					System.out.println("Token: " + token + ")");
-				}
-			} */
 		}
 	}
 PARSER_END(MyParser) 
@@ -252,36 +229,36 @@ void expression(): {}
 {
 	 (
                 (
-                        <MINUS_SIGN> <ID> | <INTEGER> | <IS_TRUE> | <IS_FALSE>
+                        <INTEGER> | <IS_TRUE> | <IS_FALSE>
                 )
+		
                 (
                         binary_arith_op()
                         ((
-                                (<MINUS_SIGN>)? <ID> | <INTEGER> | <IS_TRUE> | <IS_FALSE>
+                                (<MINUS_SIGN>)? <ID> (<OPEN_BRACKET> arg_list() <CLOSE_BRACKET>)?| <INTEGER> | <IS_TRUE> | <IS_FALSE>
                         )
 			| <OPEN_BRACKET> expression() <CLOSE_BRACKET>)
                 )*
         )
-	|  <ID> 
+	|   (<MINUS_SIGN>)? <ID> ( 
 		(//start OR 
 			(
 				<OPEN_BRACKET> arg_list() <CLOSE_BRACKET>
 			) 
 			| 
 			( 
-				( 
 				<INTEGER> | <IS_TRUE> | <IS_FALSE> 
 				)? 
 				( binary_arith_op() 
 					(( 
-						(<MINUS_SIGN>)? <ID> | <INTEGER> | <IS_TRUE> | <IS_FALSE> 
+						(<MINUS_SIGN>)? <ID> (<OPEN_BRACKET> arg_list() <CLOSE_BRACKET>)? | <INTEGER> | <IS_TRUE> | <IS_FALSE> 
 					) 
 					| <OPEN_BRACKET> expression() <CLOSE_BRACKET>
 					)
 				)+ 
 			) 
 		 )? 
-	| <OPEN_BRACKET> expression() <CLOSE_BRACKET> //TODO: Prove logical equivalence
+	| <OPEN_BRACKET> expression() <CLOSE_BRACKET> 
 }
 
 void binary_arith_op(): {}
@@ -297,8 +274,8 @@ void condition(): {}
                         <TILDA> condition()
                 )
                 |
-                LOOKAHEAD(2)(
-                        <OPEN_BRACKET> /*--going to cause conflict with expression last choice--*/ condition() <CLOSE_BRACKET>
+                LOOKAHEAD(3)(
+                        <OPEN_BRACKET> /*--going to cause conflict with expression last choice if no lookahead--*/ condition() <CLOSE_BRACKET>
                 )
                 |
                 (
@@ -308,25 +285,8 @@ void condition(): {}
         (
                 LOOKAHEAD(2)( <OR_SIGN> | <AND_SIGN> ) //Issue is being caused here by recursive issue. Issue between [...]* and the tilda condition. It doesn't know whether to traverse back up the recusive tree or continue the [...]* if the next token is "|" //TODO TRY REMOVE 
                 condition()
-        )?//TODO prove logical equivalence of (( OR | AND )c) and (( OR | AND )c)*   
+        )? 
 }
-
-
-/*void condition(): {}
-{
-	( 
-		( 
-			(<OPEN_BRACKET> --going to cause conflict with expression last choice--
-				( (<TILDA>)? expression() comp_op() expression() )
-			<CLOSE_BRACKET>)
-		)
-		|
-		(
-			( <TILDA>)? expression() comp_op() expression() )
-		( <OR_SIGN> | <AND_SIGN> ) //Issue is being caused here by recursive issue. Issue between [...]* and the tilda condition. It doesn't know whether to traverse back up the recusive tree or continue the [...]* if the next token is "|" 
-		condition() 
-	)//TODO prove logical equivalence of (( OR | AND )c) and (( OR | AND )c)*   
-}*/
 
 void comp_op(): {}
 {
@@ -338,7 +298,7 @@ void comp_op(): {}
 	| <EQUAL_GREATER_THAN>
 }
 
-void arg_list(): {} //TODO: Combine arg list and nemp arg list
+void arg_list(): {}
 {
 	(nemp_arg_list())?
 }
@@ -346,10 +306,4 @@ void arg_list(): {} //TODO: Combine arg list and nemp arg list
 void nemp_arg_list(): {}
 {
 	 (<ID> (<COMMA> <ID>)* ) 
-}
-
-int BinOp() : {} /* OP-Precedencs */ 
-{
-	<PLUS_SIGN> { return 1; }
-	| <MINUS_SIGN> { return 2; }
 }

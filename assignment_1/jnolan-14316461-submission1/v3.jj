@@ -1,0 +1,309 @@
+/* 
+ ___________________________
+|                           |
+|	SECTION ONE         |
+|    	  OPTIONS           |
+|___________________________|
+
+*/
+
+options { JAVA_UNICODE_ESCAPE = true;
+	  IGNORE_CASE = true;
+	}
+/* 
+ ___________________________
+|                           |
+|	SECTION TWO         |
+|    	 USER-CODE          |
+|___________________________|
+
+*/
+PARSER_BEGIN(MyParser)
+	public class MyParser{
+		public static void main (String [] args){
+			MyParser tokeniser;
+			//write shit here
+			if ( args.length == 0){
+				System.out.println("Reading from standard input....");
+				tokeniser = new MyParser(System.in);
+			}else if (args.length == 1){
+				try{
+					tokeniser = new MyParser(new java.io.FileInputStream(args[0]));
+				} catch (java.io.FileNotFoundException e) {
+					System.err.println("File " + args[0] + " not found.");
+					return;
+				}
+			}
+			else{
+				
+				System.out.println("MyParser: Usage is one of:");
+				System.out.println("java MyParser < inputfile");
+				System.out.println("OR");
+				System.out.println("java MyParser inputfile");
+				return;
+			}
+			try {
+				tokeniser.Prog();
+				System.out.println("MyParser: Success");
+			}catch(ParseException e) {
+				System.out.println(e.getMessage());
+				System.out.println("MyParser: Failure");
+				System.out.println("MyParser: Encountered errors during parse");
+			}
+		}
+	}
+PARSER_END(MyParser) 
+
+/* 
+ ___________________________
+|                           |
+|      SECTION THREE        |
+|     TOKEN-DEFINITONS      |
+|___________________________|
+
+*/
+TOKEN_MGR_DECLS: {
+	static int commentNesting = 0;
+}
+
+SKIP : /* COMMENTS */ {
+	"/*" { commentNesting++;
+	       System.out.println("Comment"); } : IN_COMMENT
+     | < SINGLE_COMMENT:  "//" (~["\n"])+ >  { System.out.println("One line comment found"); }
+}
+
+<IN_COMMENT> SKIP : {
+	"/*" { commentNesting++; }
+     |  "*/" { commentNesting--;
+		if (commentNesting == 0){
+			System.out.println("Comments closed");
+			SwitchTo(DEFAULT);
+		}
+		else{
+			System.out.println("Comments not shut yet");
+			System.out.println("Comments left: " + Integer.toString(commentNesting));
+		}
+	     }
+     | <~[]>
+}
+
+TOKEN : /*---RESERVED WORDS---*/ {
+	< MAIN : "main" >
+      | < BEGIN : "begin" >
+      | < END : "end" >
+      | < RETURN : "return" >
+      | < IF : "if" >
+      | < WHILE : "while" >
+      | < ELSE : "else" >
+      | < DECL_VARIABLE : "variable" >
+      | < DECL_INTEGER : "integer" >
+      | < DECL_CONSTANT : "constant" >
+      | < VOID : "void" >
+      | < IS : "is" >
+      | < DO_SKIP : "skip" >
+      | < IS_TRUE : "true" >
+      | < IS_FALSE : "false" >
+      | < BOOLEAN : "boolean" >
+      /*| < : "" >*/
+}
+
+SKIP : /*** Ignoring spaces/tabs/newlines ***/
+{
+	" "
+	| "\t"
+	| "\n"
+	| "\r"
+	| "\f"
+}
+
+TOKEN : /*---TOKENS---*/ {	
+	< COMMA : "," >
+      | < SEMICOLUMN : ";" >	
+      | < COLUMN : ":" >	
+      | < IS_VALUE: ":=" >	
+      | < OPEN_BRACKET : "(" >	
+      | < CLOSE_BRACKET : ")" >	
+      | < PLUS_SIGN : "+" >	
+      | < MINUS_SIGN : "-" >	
+      | < TILDA : "~" >	
+      | < OR_SIGN : "|" >	
+      | < AND_SIGN : "&" >	
+      | < EQUALS_SIGN : "=" >	
+      | < NEGATION_EQUALS : "!=" >	
+      | < LESS_THAN: "<" >	
+      | < EQUAL_LESS_THAN : "<=" >	
+      | < GREATER_THAN : ">" >	
+      | < EQUAL_GREATER_THAN: ">=" >	
+
+}
+
+TOKEN : /*---IDENTIFIERS---*/ {
+        < INTEGER : "0" | ("-")? (["1" - "9"])(["0" - "9"])*>
+	| < #DIGIT : ["0" - "9"] >
+	| < ID : <LETTER>("_"|<LETTER>|<DIGIT>)*>
+	| < #LETTER : ["a" - "z", "A" - "Z"] >
+}
+/* 
+ ___________________________
+|                           |
+|	SECTION FOUR        |
+|       GRAMMAR RULES       |
+|___________________________|
+*/
+
+void Prog() : {}
+{
+	decl_list() func_list() main() <EOF> 
+}
+
+void decl_list() : {}
+{
+	( decl() <SEMICOLUMN> decl_list())?
+}
+
+void decl() : {}
+{
+	var_decl() 
+	| const_decl()
+}
+
+void var_decl(): {}
+{
+	<DECL_VARIABLE> <ID> <COLUMN> type()
+}
+	
+void const_decl(): {}
+{
+	<DECL_CONSTANT> <ID> <COLUMN> type() <IS_VALUE> expression()
+}
+
+void type(): {}
+{
+	<DECL_INTEGER>
+	| <BOOLEAN>
+	| <VOID>
+}
+
+void func_list(): {}
+{
+	(function() func_list())?	
+}
+
+void function(): {}
+{
+	type() <ID> <OPEN_BRACKET> parameter_list() <CLOSE_BRACKET> <IS> decl_list() <BEGIN> statement_block() <RETURN> <OPEN_BRACKET> (expression())? <CLOSE_BRACKET> <SEMICOLUMN><END>
+
+}
+
+void parameter_list(): {}
+{
+	(nemp_parameter_list())?
+}
+
+void nemp_parameter_list(): {}
+{
+	<ID> <COLUMN> type() (<COMMA> nemp_parameter_list())? 
+}
+
+void main() : {}
+{
+	<MAIN> <BEGIN> decl_list() statement_block() <END>
+}
+
+void statement_block(): {}
+{
+	( statement() statement_block() )?
+}
+
+void statement(): {}
+{
+	<ID> ( <IS_VALUE> expression() | <OPEN_BRACKET> arg_list() <CLOSE_BRACKET> ) <SEMICOLUMN>
+	| <BEGIN> statement_block() <END> 
+	| <IF> condition() <BEGIN> statement_block() <END> 
+	| <ELSE> <BEGIN> statement_block() <END> 
+	| <WHILE> condition() <BEGIN> statement_block() <END> 
+	| <DO_SKIP> <SEMICOLUMN>
+}
+
+void expression(): {}
+{
+	 (
+                (
+                        <INTEGER> | <IS_TRUE> | <IS_FALSE>
+                )
+		
+                (
+                        binary_arith_op()
+                        ((
+                                (<MINUS_SIGN>)? <ID> (<OPEN_BRACKET> arg_list() <CLOSE_BRACKET>)?| <INTEGER> | <IS_TRUE> | <IS_FALSE>
+                        )
+			| <OPEN_BRACKET> expression() <CLOSE_BRACKET>)
+                )*
+        )
+	|   (<MINUS_SIGN>)? <ID> ( 
+		(//start OR 
+			(
+				<OPEN_BRACKET> arg_list() <CLOSE_BRACKET>
+			) 
+			| 
+			( 
+				<INTEGER> | <IS_TRUE> | <IS_FALSE> 
+				)? 
+				( binary_arith_op() 
+					(( 
+						(<MINUS_SIGN>)? <ID> (<OPEN_BRACKET> arg_list() <CLOSE_BRACKET>)? | <INTEGER> | <IS_TRUE> | <IS_FALSE> 
+					) 
+					| <OPEN_BRACKET> expression() <CLOSE_BRACKET>
+					)
+				)+ 
+			) 
+		 )? 
+	| <OPEN_BRACKET> expression() <CLOSE_BRACKET> 
+}
+
+void binary_arith_op(): {}
+{
+        <PLUS_SIGN> 
+        | <MINUS_SIGN> 
+}    
+
+void condition(): {}
+{
+        (
+                (//begin OR 
+                        <TILDA> condition()
+                )
+                |
+                LOOKAHEAD(3)(
+                        <OPEN_BRACKET> /*--going to cause conflict with expression last choice if no lookahead--*/ condition() <CLOSE_BRACKET>
+                )
+                |
+                (
+                        expression() comp_op() expression()
+                ) //end OR
+        )
+        (
+                LOOKAHEAD(2)( <OR_SIGN> | <AND_SIGN> ) //Issue is being caused here by recursive issue. Issue between [...]* and the tilda condition. It doesn't know whether to traverse back up the recusive tree or continue the [...]* if the next token is "|" //TODO TRY REMOVE 
+                condition()
+        )? 
+}
+
+void comp_op(): {}
+{
+	<EQUALS_SIGN> 
+	| <NEGATION_EQUALS> 
+	| <LESS_THAN>
+	| <EQUAL_LESS_THAN>
+	| <GREATER_THAN>
+	| <EQUAL_GREATER_THAN>
+}
+
+void arg_list(): {}
+{
+	(nemp_arg_list())?
+}
+
+void nemp_arg_list(): {}
+{
+	 (<ID> (<COMMA> <ID>)* ) 
+}

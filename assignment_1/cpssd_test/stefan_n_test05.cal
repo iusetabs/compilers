@@ -1,0 +1,5 @@
+main
+begin
+  constant a : integer := 1;
+  if a & 1 begin end else begin end
+end

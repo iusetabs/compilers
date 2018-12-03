@@ -1,0 +1,14 @@
+boolean getRadius (r: integer) is
+  variable cr : integer;
+  constant pi : integer := 3 + 4;
+begin
+  return ();
+end
+
+main
+begin
+  constant a : integer := 1;
+  variable r : integer;
+
+  r := -getRadius(a);
+end
