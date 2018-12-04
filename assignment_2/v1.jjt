@@ -9,8 +9,11 @@
 
 */
 
-options { JAVA_UNICODE_ESCAPE = true;
+options { 
+	  JAVA_UNICODE_ESCAPE = true;
 	  IGNORE_CASE = true;
+	  MULTI = true;
+          VISITOR = true;
 	}
 /* 
  ___________________________
@@ -21,36 +24,47 @@ options { JAVA_UNICODE_ESCAPE = true;
 
 */
 PARSER_BEGIN(MyParser)
+
+	//required imports
+	import java.io.*;
+	import java.util.*;
+
 	public class MyParser{
-		public static void main (String [] args){
-			MyParser tokeniser;
-			//write shit here
-			if ( args.length == 0){
-				System.out.println("Reading from standard input....");
-				tokeniser = new MyParser(System.in);
+
+		public static Hashtable ST = new Hashtable(); 
+
+		public static void main (String [] args) throws ParseException, FileNotFoundException { 
+			String t1; 
+			//STC t2;
+
+
+			if ( args.length < 1){
+				System.out.println("Cannot read from standard i/o....");
+				System.out.println("Please input file name....");
+				return;
 			}else if (args.length == 1){
 				try{
-					tokeniser = new MyParser(new java.io.FileInputStream(args[0]));
-				} catch (java.io.FileNotFoundException e) {
+					MyParser tokeniser = new MyParser(new java.io.FileInputStream(args[0]));
+					SimpleNode root = tokeniser.Prog(); //First node. Parse SS and store in "root".
+					root.dump("");
+					
+				//	PrintVisitor pv = new PrintVisitor();
+			        //	root.jjtAccept(pv, null);
+					
+				//	TypeCheckVisitor tc = new TypeCheckVisitor();
+				//	root.jjtAccept(tc, ST); //Symbol table being used with type table
+// TODO Suceess message here? 		System.out.println("Success.");
+
+				} 
+				catch (java.io.FileNotFoundException e) {
 					System.err.println("File " + args[0] + " not found.");
 					return;
 				}
-			}
-			else{
-				
-				System.out.println("MyParser: Usage is one of:");
-				System.out.println("java MyParser < inputfile");
-				System.out.println("OR");
-				System.out.println("java MyParser inputfile");
-				return;
-			}
-			try {
-				tokeniser.Prog();
-				System.out.println("MyParser: Success");
-			}catch(ParseException e) {
-				System.out.println(e.getMessage());
-				System.out.println("MyParser: Failure");
-				System.out.println("MyParser: Encountered errors during parse");
+				catch(ParseException e) {
+					System.out.println(e.getMessage());
+					System.out.println("MyParser: Failure");
+					System.out.println("MyParser: Encountered errors during parse");
+				}
 			}
 		}
 	}
@@ -64,6 +78,7 @@ PARSER_END(MyParser)
 |___________________________|
 
 */
+
 TOKEN_MGR_DECLS: {
 	static int commentNesting = 0;
 }
@@ -153,56 +168,59 @@ TOKEN : /*---IDENTIFIERS---*/ {
 |___________________________|
 */
 
-void Prog() : {}
+SimpleNode Prog() #Program :   
+{}
 {
-	decl_list() func_list() main() <EOF> 
+	decl_list() func_list() main() <EOF> {return jjtThis;} 
 }
 
-void decl_list() : {}
+void decl_list() #DECL_LIST :
+{}
 {
 	( decl() <SEMICOLUMN> decl_list())?
 }
 
-void decl() : {}
+void decl() #void : //Can skip this
+{}
 {
 	var_decl() 
 	| const_decl()
 }
 
-void var_decl(): {}
+void var_decl() #var_decl : {} 
 {
 	<DECL_VARIABLE> <ID> <COLUMN> type()
 }
 	
-void const_decl(): {}
+void const_decl() #const_decl : {}
 {
 	<DECL_CONSTANT> <ID> <COLUMN> type() <IS_VALUE> expression()
 }
 
-void type(): {}
+void type() #void : {Token t;}
 {
-	<DECL_INTEGER>
-	| <BOOLEAN>
-	| <VOID>
+	t = <DECL_INTEGER> {jjtThis.value = t.image;} #Int
+	| t = <BOOLEAN> {jjtThis.value = t.image;} #Bool
+	| t = <VOID> {jjtThis.value = t.image;} #Void //TODO semantics func type and return matching
 }
 
-void func_list(): {}
+void func_list() #Func_list : {}
 {
 	(function() func_list())?	
 }
 
-void function(): {}
+void function() #Function : {}
 {
 	type() <ID> <OPEN_BRACKET> parameter_list() <CLOSE_BRACKET> <IS> decl_list() <BEGIN> statement_block() <RETURN> <OPEN_BRACKET> (expression())? <CLOSE_BRACKET> <SEMICOLUMN><END>
 
 }
 
-void parameter_list(): {}
+void parameter_list() #void : {}
 {
 	(nemp_parameter_list())?
 }
 
-void nemp_parameter_list(): {}
+void nemp_parameter_list() #Param :  {}
 {
 	<ID> <COLUMN> type() (<COMMA> nemp_parameter_list())? 
 }
@@ -285,7 +303,7 @@ void condition(): {}
                 ) //end OR
         )
         (
-                LOOKAHEAD(2)( <OR_SIGN> | <AND_SIGN> ) //Issue is being caused here by recursive issue. Issue between [...]* and the tilda condition. It doesn't know whether to traverse back up the recusive tree or continue the [...]* if the next token is "|" //TODO TRY REMOVE 
+                LOOKAHEAD(2)( <OR_SIGN> | <AND_SIGN> ) 
                 condition()
         )? 
 }
