@@ -11,12 +11,16 @@ public class PrintVisitor implements MyParserVisitor
 		System.out.println(";");
 		return(data);
 	}
+
+	@Override
 	public Object visit(ASTDecl node, Object data)
 	{
 		System.out.print(node.value + " ");
 		node.jjtGetChild(0).jjtAccept(this, data);
 		return data;
 	}
+
+	@Override
 	public Object visit(ASTStms node, Object data)
 	{
 		node.jjtGetChild(0).jjtAccept(this, data);
@@ -24,6 +28,8 @@ public class PrintVisitor implements MyParserVisitor
 		node.jjtGetChild(1).jjtAccept(this, data);
 		return data;
 	}
+
+	@Override
 	public Object visit(ASTAdd_op node, Object data)
 	{
 		node.jjtGetChild(0).jjtAccept(this, data);
@@ -31,6 +37,8 @@ public class PrintVisitor implements MyParserVisitor
 		node.jjtGetChild(1).jjtAccept(this, data);
 		return data;
 	}
+
+	@Override
 	public Object visit(ASTBool_op node, Object data)
 	{
 		node.jjtGetChild(0).jjtAccept(this, data);
@@ -38,6 +46,8 @@ public class PrintVisitor implements MyParserVisitor
 		node.jjtGetChild(1).jjtAccept(this, data);
 		return data;
 	}
+
+	@Override
 	public Object visit(ASTMult_op node, Object data)
 	{
 		node.jjtGetChild(0).jjtAccept(this, data);
@@ -45,11 +55,15 @@ public class PrintVisitor implements MyParserVisitor
 		node.jjtGetChild(1).jjtAccept(this, data);
 		return data;
 	}
+
+	@Override
 	public Object visit(ASTNot_op node, Object data)
 	{
 		System.out.print("~");
 		return(node.jjtGetChild(0).jjtAccept(this, data));
 	}
+
+	@Override
 	public Object visit(ASTExp node, Object data)
 	{
 		System.out.print("(");
@@ -57,11 +71,15 @@ public class PrintVisitor implements MyParserVisitor
 		System.out.print(")");
 		return(data);
 	}
+
+	@Override
 	public Object visit(ASTidentifier node, Object data)
 	{
 		System.out.print(node.value);
 		return data;
 	}
+
+	@Override
 	public Object visit(ASTnumber node, Object data)
 	{
 		System.out.print(node.value);
