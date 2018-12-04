@@ -2,46 +2,38 @@
 public interface MyParserTreeConstants
 {
   public int JJTPROGRAM = 0;
-  public int JJTDECL_LIST = 1;
-  public int JJTVOID = 2;
+  public int JJTVOID = 1;
+  public int JJTDECL_LIST = 2;
   public int JJTVAR_DECL = 3;
   public int JJTCONST_DECL = 4;
   public int JJTINT = 5;
   public int JJTBOOL = 6;
-  public int JJTFUNC_LIST = 7;
-  public int JJTFUNCTION = 8;
-  public int JJTPARAM = 9;
-  public int JJTMAIN = 10;
-  public int JJTSTATEMENT_BLOCK = 11;
-  public int JJTSTATEMENT = 12;
-  public int JJTEXPRESSION = 13;
-  public int JJTBINARY_ARITH_OP = 14;
-  public int JJTCONDITION = 15;
-  public int JJTCOMP_OP = 16;
-  public int JJTARG_LIST = 17;
-  public int JJTNEMP_ARG_LIST = 18;
+  public int JJTFUNCTION = 7;
+  public int JJTPARAM = 8;
+  public int JJTMAIN = 9;
+  public int JJTASSIGN_OP = 10;
+  public int JJTEXPRESSION = 11;
+  public int JJTCONDITION = 12;
+  public int JJTARG_LIST = 13;
+  public int JJTID = 14;
 
 
   public String[] jjtNodeName = {
     "Program",
-    "DECL_LIST",
     "void",
+    "DECL_LIST",
     "var_decl",
     "const_decl",
     "Int",
     "Bool",
-    "Func_list",
     "Function",
     "Param",
-    "main",
-    "statement_block",
-    "statement",
+    "Main",
+    "ASSIGN_OP",
     "expression",
-    "binary_arith_op",
     "condition",
-    "comp_op",
     "arg_list",
-    "nemp_arg_list",
+    "ID",
   };
 }
-/* JavaCC - OriginalChecksum=69cc1d436e16bf2ed326ccaa51af53e1 (do not edit this line) */
+/* JavaCC - OriginalChecksum=89c57d50e9af5f1ffe5bb3d849e5cc7e (do not edit this line) */

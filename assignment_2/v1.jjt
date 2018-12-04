@@ -174,10 +174,10 @@ SimpleNode Prog() #Program :
 	decl_list() func_list() main() <EOF> {return jjtThis;} 
 }
 
-void decl_list() #DECL_LIST :
+void decl_list() #void :
 {}
 {
-	( decl() <SEMICOLUMN> decl_list())?
+	( {}#DECL_LIST decl() <SEMICOLUMN> decl_list() )?
 }
 
 void decl() #void : //Can skip this
@@ -204,7 +204,7 @@ void type() #void : {Token t;}
 	| t = <VOID> {jjtThis.value = t.image;} #Void //TODO semantics func type and return matching
 }
 
-void func_list() #Func_list : {}
+void func_list() #void : {}
 {
 	(function() func_list())?	
 }
@@ -225,24 +225,24 @@ void nemp_parameter_list() #Param :  {}
 	identifier() <COLUMN> type() (<COMMA> nemp_parameter_list())? 
 }
 
-void main() : {}
+void main() #Main : {}
 {
 	<MAIN> <BEGIN> decl_list() statement_block() <END>
 }
 
-void statement_block(): {}
+void statement_block() #void: {}
 {
 	( statement() statement_block() )?
 }
 
-void statement(): {}
+void statement() #void : {Token t;}
 {
-	identifier() ( <IS_VALUE> expression() | <OPEN_BRACKET> arg_list() <CLOSE_BRACKET> ) <SEMICOLUMN>
+	identifier() ( <IS_VALUE> expression() | <OPEN_BRACKET> arg_list() <CLOSE_BRACKET> ) <SEMICOLUMN> {} #ASSIGN_OP
 	| <BEGIN> statement_block() <END> 
 	| <IF> condition() <BEGIN> statement_block() <END> 
 	| <ELSE> <BEGIN> statement_block() <END> 
 	| <WHILE> condition() <BEGIN> statement_block() <END> 
-	| <DO_SKIP> <SEMICOLUMN>
+	| <DO_SKIP> <SEMICOLUMN> //TODO what is the purpose of skip? How relevant to semantics?
 }
 
 void expression(): {}
@@ -281,7 +281,7 @@ void expression(): {}
 	| <OPEN_BRACKET> expression() <CLOSE_BRACKET> 
 }
 
-void binary_arith_op(): {}
+void binary_arith_op() #void : {} //TODO string - string valid?
 {
         <PLUS_SIGN> 
         | <MINUS_SIGN> 
@@ -308,7 +308,7 @@ void condition(): {}
         )? 
 }
 
-void comp_op(): {}
+void comp_op() #void : {} //TODO string less than string valid? 
 {
 	<EQUALS_SIGN> 
 	| <NEGATION_EQUALS> 
@@ -318,16 +318,16 @@ void comp_op(): {}
 	| <EQUAL_GREATER_THAN>
 }
 
-void arg_list(): {}
+void arg_list() #void : {}
 {
 	(nemp_arg_list())?
 }
 
-void nemp_arg_list(): {}
+void nemp_arg_list() #arg_list : {}
 {
 	 (identifier() (<COMMA> identifier())* ) 
 }
-String identifier() #ID: {}
+String identifier() #ID: {Token t;}
 {
-	<ID> {jjtThis.value = t.image;} //generated non-terminal ID  
+	t = <ID> {System.out.println("Hit ID method" + "\njjtThis.value = " + jjtThis.value + "\nt.image = "  + t.image); jjtThis.value = t.image; return t.image;} //generated non-terminal ID  
 }
