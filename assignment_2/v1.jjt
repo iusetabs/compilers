@@ -189,12 +189,12 @@ void decl() #void : //Can skip this
 
 void var_decl() #var_decl : {} 
 {
-	<DECL_VARIABLE> <ID> <COLUMN> type()
+	<DECL_VARIABLE> identifier() <COLUMN> type()
 }
 	
 void const_decl() #const_decl : {}
 {
-	<DECL_CONSTANT> <ID> <COLUMN> type() <IS_VALUE> expression()
+	<DECL_CONSTANT> identifier() <COLUMN> type() <IS_VALUE> expression()
 }
 
 void type() #void : {Token t;}
@@ -211,7 +211,7 @@ void func_list() #Func_list : {}
 
 void function() #Function : {}
 {
-	type() <ID> <OPEN_BRACKET> parameter_list() <CLOSE_BRACKET> <IS> decl_list() <BEGIN> statement_block() <RETURN> <OPEN_BRACKET> (expression())? <CLOSE_BRACKET> <SEMICOLUMN><END>
+	type() identifier() <OPEN_BRACKET> parameter_list() <CLOSE_BRACKET> <IS> decl_list() <BEGIN> statement_block() <RETURN> <OPEN_BRACKET> (expression())? <CLOSE_BRACKET> <SEMICOLUMN><END>
 
 }
 
@@ -222,7 +222,7 @@ void parameter_list() #void : {}
 
 void nemp_parameter_list() #Param :  {}
 {
-	<ID> <COLUMN> type() (<COMMA> nemp_parameter_list())? 
+	identifier() <COLUMN> type() (<COMMA> nemp_parameter_list())? 
 }
 
 void main() : {}
@@ -237,7 +237,7 @@ void statement_block(): {}
 
 void statement(): {}
 {
-	<ID> ( <IS_VALUE> expression() | <OPEN_BRACKET> arg_list() <CLOSE_BRACKET> ) <SEMICOLUMN>
+	identifier() ( <IS_VALUE> expression() | <OPEN_BRACKET> arg_list() <CLOSE_BRACKET> ) <SEMICOLUMN>
 	| <BEGIN> statement_block() <END> 
 	| <IF> condition() <BEGIN> statement_block() <END> 
 	| <ELSE> <BEGIN> statement_block() <END> 
@@ -255,12 +255,12 @@ void expression(): {}
                 (
                         binary_arith_op()
                         ((
-                                (<MINUS_SIGN>)? <ID> (<OPEN_BRACKET> arg_list() <CLOSE_BRACKET>)?| <INTEGER> | <IS_TRUE> | <IS_FALSE>
+                                (<MINUS_SIGN>)? identifier() (<OPEN_BRACKET> arg_list() <CLOSE_BRACKET>)?| <INTEGER> | <IS_TRUE> | <IS_FALSE>
                         )
 			| <OPEN_BRACKET> expression() <CLOSE_BRACKET>)
                 )*
         )
-	|   (<MINUS_SIGN>)? <ID> ( 
+	|   (<MINUS_SIGN>)? identifier() ( 
 		(//start OR 
 			(
 				<OPEN_BRACKET> arg_list() <CLOSE_BRACKET>
@@ -271,7 +271,7 @@ void expression(): {}
 				)? 
 				( binary_arith_op() 
 					(( 
-						(<MINUS_SIGN>)? <ID> (<OPEN_BRACKET> arg_list() <CLOSE_BRACKET>)? | <INTEGER> | <IS_TRUE> | <IS_FALSE> 
+						(<MINUS_SIGN>)? identifier() (<OPEN_BRACKET> arg_list() <CLOSE_BRACKET>)? | <INTEGER> | <IS_TRUE> | <IS_FALSE> 
 					) 
 					| <OPEN_BRACKET> expression() <CLOSE_BRACKET>
 					)
@@ -325,5 +325,9 @@ void arg_list(): {}
 
 void nemp_arg_list(): {}
 {
-	 (<ID> (<COMMA> <ID>)* ) 
+	 (identifier() (<COMMA> identifier())* ) 
+}
+String identifier() #ID: {}
+{
+	<ID> {jjtThis.value = t.image;} //generated non-terminal ID  
 }
