@@ -2,8 +2,8 @@
 public interface MyParserVisitor
 {
   public Object visit(SimpleNode node, Object data);
-  public Object visit(ASTProgram node, Object data);
-  public Object visit(ASTDECL_LIST node, Object data);
+  public Object visit(ASTProg_Start node, Object data);
+  public Object visit(ASTDecl_list node, Object data);
   public Object visit(ASTvar_decl node, Object data);
   public Object visit(ASTconst_decl node, Object data);
   public Object visit(ASTInt node, Object data);
@@ -14,7 +14,7 @@ public interface MyParserVisitor
   public Object visit(ASTASSIGN_OP node, Object data);
   public Object visit(ASTexpression node, Object data);
   public Object visit(ASTcondition node, Object data);
-  public Object visit(ASTarg_list node, Object data);
+  public Object visit(ASTlist_of_args node, Object data);
   public Object visit(ASTID node, Object data);
 }
-/* JavaCC - OriginalChecksum=4cb841e88e333520343776111f59a687 (do not edit this line) */
+/* JavaCC - OriginalChecksum=268c86719564a2616a30f0be9f9989bf (do not edit this line) */

@@ -172,13 +172,13 @@ TOKEN : /*---IDENTIFIERS---*/ {
 |___________________________|
 */
 
-SimpleNode Prog()          :   
-{/*@bgen(jjtree) Program */
-  ASTProgram jjtn000 = new ASTProgram(JJTPROGRAM);
+SimpleNode Prog()             :   
+{/*@bgen(jjtree) Prog_Start */
+  ASTProg_Start jjtn000 = new ASTProg_Start(JJTPROG_START);
   boolean jjtc000 = true;
   jjtree.openNodeScope(jjtn000);
 /*@egen*/}
-{/*@bgen(jjtree) Program */
+{/*@bgen(jjtree) Prog_Start */
         try {
 /*@egen*/
 	decl_list() func_list() main() <EOF>/*@bgen(jjtree)*/
@@ -212,9 +212,9 @@ SimpleNode Prog()          :
 void decl_list()       :
 {}
 {
-	(/*@bgen(jjtree) DECL_LIST */
+	(/*@bgen(jjtree) Decl_list */
           {
-            ASTDECL_LIST jjtn001 = new ASTDECL_LIST(JJTDECL_LIST);
+            ASTDecl_list jjtn001 = new ASTDecl_list(JJTDECL_LIST);
             boolean jjtc001 = true;
             jjtree.openNodeScope(jjtn001);
           }
@@ -630,12 +630,12 @@ void arg_list()       : {}
 	(nemp_arg_list())?
 }
 
-void nemp_arg_list()           : {/*@bgen(jjtree) arg_list */
-  ASTarg_list jjtn000 = new ASTarg_list(JJTARG_LIST);
+void nemp_arg_list()               : {/*@bgen(jjtree) list_of_args */
+  ASTlist_of_args jjtn000 = new ASTlist_of_args(JJTLIST_OF_ARGS);
   boolean jjtc000 = true;
   jjtree.openNodeScope(jjtn000);
 /*@egen*/}
-{/*@bgen(jjtree) arg_list */
+{/*@bgen(jjtree) list_of_args */
          try {
 /*@egen*/
 	 (identifier() (<COMMA> identifier())* )/*@bgen(jjtree)*/
@@ -660,6 +660,7 @@ void nemp_arg_list()           : {/*@bgen(jjtree) arg_list */
          }
 /*@egen*/ 
 }
+
 String identifier()    : {/*@bgen(jjtree) ID */
                           ASTID jjtn000 = new ASTID(JJTID);
                           boolean jjtc000 = true;
@@ -673,7 +674,7 @@ String identifier()    : {/*@bgen(jjtree) ID */
                    jjtree.closeNodeScope(jjtn000, true);
                    jjtc000 = false;
                  }
-/*@egen*/ {System.out.println("Hit ID method" + "\njjtThis.value = " + jjtn000.value + "\nt.image = "  + t.image); jjtn000.value = t.image; return t.image;}/*@bgen(jjtree)*/
+/*@egen*/ {jjtn000.value = t.image; return t.image;}/*@bgen(jjtree)*/
         } finally {
           if (jjtc000) {
             jjtree.closeNodeScope(jjtn000, true);

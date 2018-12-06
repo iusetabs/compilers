@@ -50,8 +50,8 @@
 |___________________________|
 */
   static final public SimpleNode Prog() throws ParseException {
- /*@bgen(jjtree) Program */
-  ASTProgram jjtn000 = new ASTProgram(JJTPROGRAM);
+ /*@bgen(jjtree) Prog_Start */
+  ASTProg_Start jjtn000 = new ASTProg_Start(JJTPROG_START);
   boolean jjtc000 = true;
   jjtree.openNodeScope(jjtn000);
     try {
@@ -88,7 +88,7 @@
     switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
     case DECL_VARIABLE:
     case DECL_CONSTANT:
-            ASTDECL_LIST jjtn001 = new ASTDECL_LIST(JJTDECL_LIST);
+            ASTDecl_list jjtn001 = new ASTDecl_list(JJTDECL_LIST);
             boolean jjtc001 = true;
             jjtree.openNodeScope(jjtn001);
       try {
@@ -865,8 +865,8 @@
   }
 
   static final public void nemp_arg_list() throws ParseException {
-                                  /*@bgen(jjtree) arg_list */
-  ASTarg_list jjtn000 = new ASTarg_list(JJTARG_LIST);
+                                      /*@bgen(jjtree) list_of_args */
+  ASTlist_of_args jjtn000 = new ASTlist_of_args(JJTLIST_OF_ARGS);
   boolean jjtc000 = true;
   jjtree.openNodeScope(jjtn000);
     try {
@@ -914,7 +914,7 @@
       t = jj_consume_token(ID);
                    jjtree.closeNodeScope(jjtn000, true);
                    jjtc000 = false;
-                  System.out.println("Hit ID method" + "\u005cnjjtThis.value = " + jjtn000.value + "\u005cnt.image = "  + t.image); jjtn000.value = t.image; {if (true) return t.image;}
+                  jjtn000.value = t.image; {if (true) return t.image;}
     } finally {
           if (jjtc000) {
             jjtree.closeNodeScope(jjtn000, true);
@@ -1084,6 +1084,11 @@
     return false;
   }
 
+  static private boolean jj_3R_13() {
+    if (jj_scan_token(ID)) return true;
+    return false;
+  }
+
   static private boolean jj_3R_17() {
     Token xsp;
     xsp = jj_scanpos;
@@ -1093,11 +1098,6 @@
       xsp = jj_scanpos;
       if (jj_3R_19()) { jj_scanpos = xsp; break; }
     }
-    return false;
-  }
-
-  static private boolean jj_3R_13() {
-    if (jj_scan_token(ID)) return true;
     return false;
   }
 

@@ -168,7 +168,7 @@ TOKEN : /*---IDENTIFIERS---*/ {
 |___________________________|
 */
 
-SimpleNode Prog() #Program :   
+SimpleNode Prog() #Prog_Start :   
 {}
 {
 	decl_list() func_list() main() <EOF> {return jjtThis;} 
@@ -177,7 +177,7 @@ SimpleNode Prog() #Program :
 void decl_list() #void :
 {}
 {
-	( {}#DECL_LIST decl() <SEMICOLUMN> decl_list() )?
+	( {}#Decl_list decl() <SEMICOLUMN> decl_list() )?
 }
 
 void decl() #void : //Can skip this
@@ -323,11 +323,12 @@ void arg_list() #void : {}
 	(nemp_arg_list())?
 }
 
-void nemp_arg_list() #arg_list : {}
+void nemp_arg_list() #list_of_args : {}
 {
 	 (identifier() (<COMMA> identifier())* ) 
 }
+
 String identifier() #ID: {Token t;}
 {
-	t = <ID> {System.out.println("Hit ID method" + "\njjtThis.value = " + jjtThis.value + "\nt.image = "  + t.image); jjtThis.value = t.image; return t.image;} //generated non-terminal ID  
+	t = <ID> {jjtThis.value = t.image; return t.image;} //generated non-terminal ID  
 }
