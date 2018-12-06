@@ -1,6 +1,6 @@
 main 
 begin
 	variable i: integer;
-	i := 0 + 3;
+	i := 0 + true;
 	i := i + 1;
 end
