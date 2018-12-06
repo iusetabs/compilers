@@ -10,12 +10,17 @@ public interface MyParserTreeConstants
   public int JJTBOOL = 6;
   public int JJTFUNCTION = 7;
   public int JJTPARAM = 8;
-  public int JJTMAIN = 9;
+  public int JJTMAIN_CODE = 9;
   public int JJTASSIGN_OP = 10;
-  public int JJTEXPRESSION = 11;
-  public int JJTCONDITION = 12;
-  public int JJTLIST_OF_ARGS = 13;
-  public int JJTID = 14;
+  public int JJTIF = 11;
+  public int JJTELSE = 12;
+  public int JJTWHILE = 13;
+  public int JJTEXPRESSION = 14;
+  public int JJTPLUS_OP = 15;
+  public int JJTSUBTRACT_OP = 16;
+  public int JJTCONDITION = 17;
+  public int JJTLIST_OF_ARGS = 18;
+  public int JJTID = 19;
 
 
   public String[] jjtNodeName = {
@@ -28,12 +33,17 @@ public interface MyParserTreeConstants
     "Bool",
     "Function",
     "Param",
-    "Main",
+    "Main_Code",
     "ASSIGN_OP",
+    "IF",
+    "ELSE",
+    "WHILE",
     "expression",
+    "PLUS_OP",
+    "SUBTRACT_OP",
     "condition",
     "list_of_args",
     "ID",
   };
 }
-/* JavaCC - OriginalChecksum=1d288a67033bc17e2af6ee94ba97e89d (do not edit this line) */
+/* JavaCC - OriginalChecksum=ead86f0dd0de178b2aabb9e982553fa1 (do not edit this line) */

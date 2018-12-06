@@ -225,7 +225,7 @@ void nemp_parameter_list() #Param :  {}
 	identifier() <COLUMN> type() (<COMMA> nemp_parameter_list())? 
 }
 
-void main() #Main : {}
+void main() #Main_Code : {}
 {
 	<MAIN> <BEGIN> decl_list() statement_block() <END>
 }
@@ -238,11 +238,11 @@ void statement_block() #void: {}
 void statement() #void : {Token t;}
 {
 	identifier() ( <IS_VALUE> expression() | <OPEN_BRACKET> arg_list() <CLOSE_BRACKET> ) <SEMICOLUMN> {} #ASSIGN_OP
-	| <BEGIN> statement_block() <END> 
-	| <IF> condition() <BEGIN> statement_block() <END> 
-	| <ELSE> <BEGIN> statement_block() <END> 
-	| <WHILE> condition() <BEGIN> statement_block() <END> 
-	| <DO_SKIP> <SEMICOLUMN> //TODO what is the purpose of skip? How relevant to semantics?
+	| <BEGIN> statement_block() <END> #void
+	| <IF> condition() <BEGIN> statement_block() <END> #IF
+	| <ELSE> <BEGIN> statement_block() <END> #ELSE
+	| <WHILE> condition() <BEGIN> statement_block() <END> #WHILE 
+	| <DO_SKIP> <SEMICOLUMN> #void //TODO what is the purpose of skip? How relevant to semantics?
 }
 
 void expression(): {}
@@ -283,8 +283,8 @@ void expression(): {}
 
 void binary_arith_op() #void : {} //TODO string - string valid?
 {
-        <PLUS_SIGN> 
-        | <MINUS_SIGN> 
+        <PLUS_SIGN> #PLUS_OP(>1) 
+        | <MINUS_SIGN> #SUBTRACT_OP(>1)
 }    
 
 void condition(): {}

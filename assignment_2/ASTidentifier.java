@@ -6,14 +6,14 @@ class ASTidentifier extends SimpleNode {
     super(id);
   }
 
-  public ASTidentifier(ExprLang p, int id) {
+  public ASTidentifier(MyParser p, int id) {
     super(p, id);
   }
 
 
   /** Accept the visitor. **/
-  public Object jjtAccept(ExprLangVisitor visitor, Object data) {
+  public Object jjtAccept(MyParserVisitor visitor, Object data) {
     return visitor.visit(this, data);
   }
 }
-/* JavaCC - OriginalChecksum=50d841bb374108ac711fbaa00705bcdc (do not edit this line) */
+/* JavaCC - OriginalChecksum=9faae68e625591d0182338879dd8c7a1 (do not edit this line) */
