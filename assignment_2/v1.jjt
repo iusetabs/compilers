@@ -237,7 +237,7 @@ void statement_block() #void: {}
 
 void statement() #void : {Token t;}
 {
-	identifier() ( <IS_VALUE> expression() | <OPEN_BRACKET> arg_list() <CLOSE_BRACKET> ) <SEMICOLUMN> {} #ASSIGN_OP
+	identifier() ( <IS_VALUE> expression() | <OPEN_BRACKET> arg_list() <CLOSE_BRACKET> ) <SEMICOLUMN> {} 
 	| <BEGIN> statement_block() <END> #void
 	| <IF> condition() <BEGIN> statement_block() <END> #IF
 	| <ELSE> <BEGIN> statement_block() <END> #ELSE
@@ -245,17 +245,17 @@ void statement() #void : {Token t;}
 	| <DO_SKIP> <SEMICOLUMN> #void //TODO what is the purpose of skip? How relevant to semantics?
 }
 
-void expression(): {}
+void expression() #void: {}
 {
 	 (
                 (
-                        <INTEGER> | <IS_TRUE> | <IS_FALSE>
+                        integer() | is_true() | is_false()
                 )
 		
                 (
                         binary_arith_op()
                         ((
-                                (<MINUS_SIGN>)? identifier() (<OPEN_BRACKET> arg_list() <CLOSE_BRACKET>)?| <INTEGER> | <IS_TRUE> | <IS_FALSE>
+                                (<MINUS_SIGN>)? identifier() (<OPEN_BRACKET> arg_list() <CLOSE_BRACKET>)?| integer() | is_true() | is_false()
                         )
 			| <OPEN_BRACKET> expression() <CLOSE_BRACKET>)
                 )*
@@ -267,11 +267,11 @@ void expression(): {}
 			) 
 			| 
 			( 
-				<INTEGER> | <IS_TRUE> | <IS_FALSE> 
+				integer() | is_true() | is_false() 
 				)? 
 				( binary_arith_op() 
 					(( 
-						(<MINUS_SIGN>)? identifier() (<OPEN_BRACKET> arg_list() <CLOSE_BRACKET>)? | <INTEGER> | <IS_TRUE> | <IS_FALSE> 
+					/*TODO negation?*/	(<MINUS_SIGN>)? identifier() (<OPEN_BRACKET> arg_list() <CLOSE_BRACKET>)? | integer() | is_true() | is_false() 
 					) 
 					| <OPEN_BRACKET> expression() <CLOSE_BRACKET>
 					)
@@ -283,8 +283,8 @@ void expression(): {}
 
 void binary_arith_op() #void : {} //TODO string - string valid?
 {
-        <PLUS_SIGN> #PLUS_OP(>1) 
-        | <MINUS_SIGN> #SUBTRACT_OP(>1)
+        <PLUS_SIGN> #PLUS_OP(2) 
+        | <MINUS_SIGN> #SUBTRACT_OP(2)
 }    
 
 void condition(): {}
@@ -331,4 +331,19 @@ void nemp_arg_list() #list_of_args : {}
 String identifier() #ID: {Token t;}
 {
 	t = <ID> {jjtThis.value = t.image; return t.image;} //generated non-terminal ID  
+}
+
+String integer() #INT: {Token t;} 
+{
+	t = <INTEGER> {jjtThis.value = t.image; return t.image;} //generated non-terminal ID  
+}
+
+String is_true() #IS_TRUE: {Token t;}
+{
+	t = <IS_TRUE> {jjtThis.value = t.image; return t.image;} //generated non-terminal ID  
+}
+
+String is_false() #IS_FALSE: {Token t;}
+{
+	t = <IS_FALSE> {jjtThis.value = t.image; return t.image;} //generated non-terminal ID  
 }

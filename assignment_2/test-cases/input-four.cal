@@ -1,15 +1,6 @@
-variable i : integer;
-
-integer test_fn(x: integer) is
-	variable i: integer;
-begin
-	i := 0 + - i + 3;
-	return (x + (2 + (3 + 4)));
-end
-
 main 
 begin
 	variable i: integer;
-	i := 1;
-	i := test_fn(i);
+	i := 0 + 3;
+	i := i + 1;
 end
