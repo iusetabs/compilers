@@ -1,0 +1,11 @@
+variable a12345 : integer;
+
+main
+begin
+  if (123 = 123)
+  begin
+  end
+  else
+  begin
+  end
+end

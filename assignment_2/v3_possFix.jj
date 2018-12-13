@@ -1,0 +1,315 @@
+/* 
+ ___________________________
+|                           |
+|	SECTION ONE         |
+|    	  OPTIONS           |
+|___________________________|
+
+*/
+
+options { JAVA_UNICODE_ESCAPE = true;
+	  IGNORE_CASE = true;
+	}
+/* 
+ ___________________________
+|                           |
+|	SECTION TWO         |
+|    	 USER-CODE          |
+|___________________________|
+
+*/
+PARSER_BEGIN(MyParser)
+	public class MyParser{
+		public static void main (String [] args){
+			MyParser tokeniser;
+			//write shit here
+			if ( args.length == 0){
+				System.out.println("Reading from standard input....");
+				tokeniser = new MyParser(System.in);
+			}else if (args.length == 1){
+				try{
+					tokeniser = new MyParser(new java.io.FileInputStream(args[0]));
+				} catch (java.io.FileNotFoundException e) {
+					System.err.println("File " + args[0] + " not found.");
+					return;
+				}
+			}
+			else{
+				
+				System.out.println("SLP Tokeniser: Usage is one of:");
+				System.out.println("java SLPTokeniser < inputfile");
+				System.out.println("OR");
+				System.out.println("java SLPTokeniser inputfile");
+				return;
+			}
+			/*
+			* We’ve now initialised the tokeniser to read from the appropriate place,
+			* so just keep reading tokens and printing them until we hit EOF
+			*/
+			try {
+				tokeniser.Prog();
+			}catch(ParseException e) {
+				System.out.println(e.getMessage());
+				System.out.println("SLP Interpreter: Encountered errors during parse");
+			}
+			for (Token t = getNextToken(); t.kind!=EOF; t = getNextToken()) {
+				// Print out the actual text for the constants, identifiers etc.
+				if (t.kind==INTEGER)
+				{
+					System.out.print("Integer");
+					System.out.print("( Kind: " + t.kind + " Image: " + t.image + " ");
+					System.out.println("Token: " + token + ")");
+				}
+				else if (t.kind==ID)
+				{
+					System.out.print("Identifier");
+					System.out.print("( Kind: " + t.kind + " Image: " + t.image + " ");
+					System.out.println("Token: " + token + ")");
+				}
+				else{
+					System.out.print("( Kind: " + t.kind + " Image: " + t.image + " ");
+					System.out.println("Token: " + token + ")");
+				}
+			} 
+		}
+	}
+PARSER_END(MyParser) 
+
+/* 
+ ___________________________
+|                           |
+|      SECTION THREE        |
+|     TOKEN-DEFINITONS      |
+|___________________________|
+
+*/
+TOKEN_MGR_DECLS: {
+	static int commentNesting = 0;
+}
+
+SKIP : /* COMMENTS */ {
+	"/*" { commentNesting++;
+	       System.out.println("Comment"); } : IN_COMMENT
+     | < SINGLE_COMMENT:  "//" (~["\n"])+ >  { System.out.println("One line comment found"); }
+}
+
+<IN_COMMENT> SKIP : {
+	"/*" { commentNesting++; }
+     |  "*/" { commentNesting--;
+		if (commentNesting == 0){
+			System.out.println("Comments closed");
+			SwitchTo(DEFAULT);
+		}
+		else{
+			System.out.println("Comments not shut yet");
+			System.out.println("Comments left: " + Integer.toString(commentNesting));
+		}
+	     }
+     | <~[]>
+}
+
+TOKEN : /*---RESERVED WORDS---*/ {
+	< MAIN : "main" >
+      | < BEGIN : "begin" >
+      | < END : "end" >
+      | < RETURN : "return" >
+      | < IF : "if" >
+      | < WHILE : "while" >
+      | < ELSE : "else" >
+      | < DECL_VARIABLE : "variable" >
+      | < DECL_INTEGER : "integer" >
+      | < DECL_CONSTANT : "constant" >
+      | < VOID : "void" >
+      | < IS : "is" >
+      | < DO_SKIP : "skip" >
+      | < IS_TRUE : "true" >
+      | < IS_FALSE : "false" >
+      | < BOOLEAN : "boolean" >
+      /*| < : "" >*/
+}
+
+SKIP : /*** Ignoring spaces/tabs/newlines ***/
+{
+	" "
+	| "\t"
+	| "\n"
+	| "\r"
+	| "\f"
+}
+
+TOKEN : /*---TOKENS---*/ {	
+	< COMMA : "," >
+      | < SEMICOLUMN : ";" >	
+      | < COLUMN : ":" >	
+      | < IS_VALUE: ":=" >	
+      | < OPEN_BRACKET : "(" >	
+      | < CLOSE_BRACKET : ")" >	
+      | < PLUS_SIGN : "+" >	
+      | < MINUS_SIGN : "-" >	
+      | < TILDA : "~" >	
+      | < OR_SIGN : "|" >	
+      | < AND_SIGN : "&" >	
+      | < EQUALS_SIGN : "=" >	
+      | < NEGATION_EQUALS : "!=" >	
+      | < LESS_THAN: "<" >	
+      | < EQUAL_LESS_THAN : "<=" >	
+      | < GREATER_THAN : ">" >	
+      | < EQUAL_GREATER_THAN: ">=" >	
+
+}
+
+TOKEN : /*---IDENTIFIERS---*/ {
+        < INTEGER : "0" | ("-")? (["1" - "9"])(["0" - "9"])*>
+	| < #INVALID_INTEGER : ("-")? "0" (["0" - "9"])*>
+	| < #DIGIT : ["0" - "9"] >
+	| < ID : <LETTER>("_"|<LETTER>|<DIGIT>)*>
+	| < #LETTER : ["a" - "z", "A" - "Z"] >
+}
+/* 
+ ___________________________
+|                           |
+|	SECTION FOUR        |
+|       GRAMMAR RULES       |
+|___________________________|
+*/
+
+void Prog() : {}
+{
+	decl_list() func_list() main() <EOF> 
+}
+
+void decl_list() : {}
+{
+	decl() <SEMICOLUMN> (decl_list())?
+}
+
+void decl() : {}
+{
+	var_decl() 
+	| const_decl()
+}
+
+void var_decl(): {}
+{
+	<DECL_VARIABLE> <ID> <COLUMN> type()
+}
+	
+void const_decl(): {}
+{
+	<DECL_CONSTANT> <ID> <COLUMN> type() <IS_VALUE> expression()
+}
+
+void type(): {}
+{
+	<DECL_INTEGER>
+	| <BOOLEAN>
+	| <VOID>
+}
+
+void func_list(): {}
+{
+	function() (func_list())?	
+}
+
+void function(): {}
+{
+	type() <ID> parameter_list() <IS> decl_list() <BEGIN> statement_block() <RETURN> (expression())? <END>
+
+}
+
+void parameter_list(): {}
+{
+	(nemp_parameter_list())?
+}
+
+void nemp_parameter_list(): {}
+{
+	<ID> <COLUMN> type() (<COMMA> nemp_parameter_list())? 
+}
+
+void main() : {}
+{
+	<MAIN> <BEGIN> decl_list() statement_block() <END>
+}
+
+void statement_block(): {}
+{
+	statement() statement_block()
+}
+
+void statement(): {}
+{
+	<ID> ( <IS_VALUE> expression() | <OPEN_BRACKET> arg_list() <CLOSE_BRACKET> ) <SEMICOLUMN>
+	| <BEGIN> statement_block() <END> 
+	| <IF> condition() <BEGIN> statement_block() <END> 
+	| <ELSE> <BEGIN> statement_block() <END> 
+	| <WHILE> condition() <BEGIN> statement_block() <END> 
+	| <DO_SKIP> <SEMICOLUMN>
+}
+
+void expression(): {} //TODO FRAG CALL:: REPLACING ID
+{
+	<ID> ( fragment() ( binary_arith_op() fragment() )? ) | ( <OPEN_BRACKET>  ( arg_list() | expression() ) <CLOSE_BRACKET> )
+ 	| <OPEN_BRACKET> ( arg_list() | expression() ) <CLOSE_BRACKET> 
+}
+
+void binary_arith_op(): {}
+{
+	<PLUS_SIGN> 
+	| <MINUS_SIGN> 
+}	
+
+void fragment(): {} 
+{
+	<MINUS_SIGN> <ID> fragment_PRIME()
+	| <INTEGER> fragment_PRIME() 
+	| <IS_TRUE> fragment_PRIME()
+	| <IS_FALSE> fragment_PRIME()
+	| fragment_PRIME()
+}
+
+void fragment_PRIME(): {}
+{
+	(binary_arith_op() fragment_PRIME() fragment_PRIME())?
+	| <OPEN_BRACKET> fragment_PRIME() <CLOSE_BRACKET>
+	| <ID> <OPEN_BRACKET> arg_list() <CLOSE_BRACKET> //TODO 274
+	| fragment_PRIME()  
+}
+
+void condition(): {}
+{
+	<TILDA> condition() condition_PRIME()
+	| <OPEN_BRACKET> condition() <CLOSE_BRACKET> condition_PRIME()
+	| expression() comp_op() expression() condition_PRIME() //TODO 281
+}
+
+void condition_PRIME(): {}
+{
+	( ( <OR_SIGN> | <AND_SIGN> ) condition() condition_PRIME() )?
+}
+
+void comp_op(): {}
+{
+	<EQUALS_SIGN> 
+	| <NEGATION_EQUALS> 
+	| <LESS_THAN>
+	| <EQUAL_LESS_THAN>
+	| <GREATER_THAN>
+	| <EQUAL_GREATER_THAN>
+}
+
+void arg_list(): {} //TODO: Combine arg list and nemp arg list
+{
+	(nemp_arg_list())?
+}
+
+void nemp_arg_list(): {}
+{
+	 (<ID> (<COMMA> <ID>)* ) 
+}
+
+int BinOp() : {} /* OP-Precedencs */ 
+{
+	<PLUS_SIGN> { return 1; }
+	| <MINUS_SIGN> { return 2; }
+}

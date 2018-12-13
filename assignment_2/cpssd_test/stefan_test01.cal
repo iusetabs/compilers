@@ -1,0 +1,11 @@
+main
+begin
+  variable x : integer;
+  variable y : integer;
+  x := 2;
+  y := 3;
+  while ((x) < y & (x=2))
+  begin
+    x := (x+1);
+  end
+end

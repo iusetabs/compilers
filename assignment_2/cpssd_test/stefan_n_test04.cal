@@ -1,0 +1,4 @@
+main
+begin
+  constant a : integer := ~1;
+end

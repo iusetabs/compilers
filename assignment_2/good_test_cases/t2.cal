@@ -1,0 +1,8 @@
+void func ( ) i s
+begin
+return ( ) ;
+end
+4main
+begin
+func ( ) ;
+end

@@ -1,0 +1,5 @@
+main
+begin
+// a s i m p l e comment
+/∗ a comment /∗ with /∗ s e v e r a l ∗/ n e s t e d ∗/ comments ∗/
+end

@@ -4,35 +4,33 @@ public interface MyParserTreeConstants
   public int JJTPROG_START = 0;
   public int JJTVOID = 1;
   public int JJTDECL_LIST = 2;
-  public int JJTVAR_DECL = 3;
-  public int JJTCONST_DECL = 4;
-  public int JJTINT = 5;
-  public int JJTBOOL = 6;
-  public int JJTFUNCTION = 7;
-  public int JJTPARAM = 8;
-  public int JJTMAIN_CODE = 9;
-  public int JJTASSIGN_OP = 10;
-  public int JJTIF = 11;
-  public int JJTELSE = 12;
-  public int JJTWHILE = 13;
-  public int JJTEXPRESSION = 14;
-  public int JJTPLUS_OP = 15;
-  public int JJTSUBTRACT_OP = 16;
-  public int JJTCONDITION = 17;
-  public int JJTLIST_OF_ARGS = 18;
-  public int JJTID = 19;
+  public int JJTVARIABLE_DECL = 3;
+  public int JJTCONSTANT_DECL = 4;
+  public int JJTVAL_TYPE = 5;
+  public int JJTFUNCTION = 6;
+  public int JJTPARAMETER = 7;
+  public int JJTMAIN_CODE = 8;
+  public int JJTASSIGN_OP = 9;
+  public int JJTIF = 10;
+  public int JJTELSE = 11;
+  public int JJTWHILE = 12;
+  public int JJTEXPRESSION = 13;
+  public int JJTPLUS_OP = 14;
+  public int JJTSUBTRACT_OP = 15;
+  public int JJTCONDITION = 16;
+  public int JJTLIST_OF_ARGS = 17;
+  public int JJTID = 18;
 
 
   public String[] jjtNodeName = {
     "Prog_Start",
     "void",
     "Decl_list",
-    "var_decl",
-    "const_decl",
-    "Int",
-    "Bool",
+    "variable_decl",
+    "constant_decl",
+    "VAL_TYPE",
     "Function",
-    "Param",
+    "Parameter",
     "Main_Code",
     "ASSIGN_OP",
     "IF",
@@ -46,4 +44,4 @@ public interface MyParserTreeConstants
     "ID",
   };
 }
-/* JavaCC - OriginalChecksum=ead86f0dd0de178b2aabb9e982553fa1 (do not edit this line) */
+/* JavaCC - OriginalChecksum=f880528672a984313b68e920526b1b01 (do not edit this line) */
