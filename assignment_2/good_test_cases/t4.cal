@@ -1,0 +1,61 @@
+in teger multiply (x : integer , y : in teger ) i s
+variable result : integer ;
+v a r i a b l e minus sign : boolean ;
+begin
+// f i g u r e out s i g n o f r e s u l t and c o n v e r t a r g s to a b s o l u t e v a l u e s
+i f ( x < 0 & y >= 0)
+begin
+m i n u s s i g n := t r u e ;
+x := −x ;
+end
+else
+begin
+i f y < 0 & x >= 0
+begin
+m i n u s s i g n := t r u e ;
+y := −y ;
+end
+else
+begin
+i f ( x < 0) & y < 0
+begin
+m i n u s s i g n := f a l s e ;
+x := −x ;
+y := −y ;
+end
+else
+begin
+m i n u s s i g n := f a l s e ;
+end
+end
+end
+r e s u l t := 0 ;
+w h i l e ( y > 0)
+begin
+r e s u l t := r e s u l t + x ;
+y := y − 1 ;
+end
+i f minus sign = true
+begin
+r e s u l t := − r e s u l t ;
+end
+else
+begin
+skip ;
+end
+return ( r e s u l t ) ;
+end
+main
+begin
+variable
+variable
+variable
+constant
+arg 1 : i n t eger ;
+arg 2 : i n t eger ;
+result : integer ;
+f i v e : i n t e g e r := 5 ;
+a r g 1 := −6;
+a r g 2 := f i v e ;
+r e s u l t := m u l t i p l y ( a r g 1 , a r g 2 ) ;
+end

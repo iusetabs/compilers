@@ -84,21 +84,15 @@ TOKEN_MGR_DECLS: {
 }
 
 SKIP : /* COMMENTS */ {
-	"/*" { commentNesting++;
-	       System.out.println("Comment"); } : IN_COMMENT
-     | < SINGLE_COMMENT:  "//" (~["\n"])+ >  { System.out.println("One line comment found"); }
+	"/*" { commentNesting++; } : IN_COMMENT
+     | < SINGLE_COMMENT:  "//" (~["\n"])+ >  
 }
 
 <IN_COMMENT> SKIP : {
 	"/*" { commentNesting++; }
      |  "*/" { commentNesting--;
 		if (commentNesting == 0){
-			System.out.println("Comments closed");
 			SwitchTo(DEFAULT);
-		}
-		else{
-			System.out.println("Comments not shut yet");
-			System.out.println("Comments left: " + Integer.toString(commentNesting));
 		}
 	     }
      | <~[]>
@@ -168,16 +162,16 @@ TOKEN : /*---IDENTIFIERS---*/ {
 |___________________________|
 */
 
-SimpleNode Prog() #Program :   
+SimpleNode Prog() #Prog_Start :   
 {}
 {
 	decl_list() func_list() main() <EOF> {return jjtThis;} 
 }
 
-void decl_list() #DECL_LIST :
+void decl_list() #void :
 {}
 {
-	( decl() <SEMICOLUMN> decl_list())?
+	( decl() <SEMICOLUMN> decl_list() )?
 }
 
 void decl() #void : //Can skip this
@@ -187,31 +181,31 @@ void decl() #void : //Can skip this
 	| const_decl()
 }
 
-void var_decl() #var_decl : {} 
+void var_decl() #variable_decl : {} 
 {
-	<DECL_VARIABLE> <ID> <COLUMN> type()
+	<DECL_VARIABLE> identifier(false) <COLUMN> type()
 }
 	
-void const_decl() #const_decl : {}
+void const_decl() #constant_decl : {}
 {
-	<DECL_CONSTANT> <ID> <COLUMN> type() <IS_VALUE> expression()
+	<DECL_CONSTANT> identifier(false) <COLUMN> type() <IS_VALUE> expression()
 }
 
-void type() #void : {Token t;}
+void type() #VAL_TYPE : {Token t;}
 {
-	t = <DECL_INTEGER> {jjtThis.value = t.image;} #Int
-	| t = <BOOLEAN> {jjtThis.value = t.image;} #Bool
-	| t = <VOID> {jjtThis.value = t.image;} #Void //TODO semantics func type and return matching
+	t = <DECL_INTEGER> {jjtThis.value = t.image;} 
+	| t = <BOOLEAN> {jjtThis.value = t.image;} 
+	| t = <VOID> {jjtThis.value = t.image;}
 }
 
-void func_list() #Func_list : {}
+void func_list() #void : {}
 {
 	(function() func_list())?	
 }
 
-void function() #Function : {}
+void function() #Function: {}
 {
-	type() <ID> <OPEN_BRACKET> parameter_list() <CLOSE_BRACKET> <IS> decl_list() <BEGIN> statement_block() <RETURN> <OPEN_BRACKET> (expression())? <CLOSE_BRACKET> <SEMICOLUMN><END>
+	type() identifier(false) <OPEN_BRACKET> parameter_list() #PARAM_LIST(>0) <CLOSE_BRACKET> <IS> decl_list() #DECL_LIST(>0) <BEGIN> statement_block() #FUNCTION_CODE(>0) <RETURN> <OPEN_BRACKET> (expression())? #RETURNS(>0) <CLOSE_BRACKET> <SEMICOLUMN><END>
 
 }
 
@@ -220,110 +214,198 @@ void parameter_list() #void : {}
 	(nemp_parameter_list())?
 }
 
-void nemp_parameter_list() #Param :  {}
+void nemp_parameter_list() #void :  {}
 {
-	<ID> <COLUMN> type() (<COMMA> nemp_parameter_list())? 
+	identifier(false) <COLUMN> type() #Parameter(2) (<COMMA> nemp_parameter_list())? 
 }
 
-void main() : {}
+void main() #MAIN() : {}
 {
-	<MAIN> <BEGIN> decl_list() statement_block() <END>
+	<MAIN> <BEGIN> decl_list() #MAIN_DECLS(>0) statement_block() #MAIN_CODE(>0) <END>
 }
 
-void statement_block(): {}
+void statement_block() #void:  {}
 {
-	( statement() statement_block() )?
+	(statement() statement_block() )?
 }
 
-void statement(): {}
+void statement() #void : {Token t;}
 {
-	<ID> ( <IS_VALUE> expression() | <OPEN_BRACKET> arg_list() <CLOSE_BRACKET> ) <SEMICOLUMN>
-	| <BEGIN> statement_block() <END> 
-	| <IF> condition() <BEGIN> statement_block() <END> 
-	| <ELSE> <BEGIN> statement_block() <END> 
-	| <WHILE> condition() <BEGIN> statement_block() <END> 
-	| <DO_SKIP> <SEMICOLUMN>
+	identifier(false) 
+	(//BEGIN OR
+		 <IS_VALUE> expression() #ASSIGN_OP(2) 
+		| <OPEN_BRACKET> arg_list() <CLOSE_BRACKET> #FUNC_CALL(2)
+	)//END OR
+        <SEMICOLUMN>  
+	| <BEGIN> statement_block() <END> #void
+	| <IF> condition() #IF_CONDITION(>0) <BEGIN> statement_block() #IF_CODE(>0) <END> #IF(2)
+	| <ELSE> <BEGIN> statement_block() #ELSE_CODE(>0) <END> #ELSE(1)
+	| <WHILE> condition() #WHILE_CONDITION(>0) <BEGIN> statement_block() #WHILE_CODE(>0) <END> #WHILE(2) 
+	| <DO_SKIP> <SEMICOLUMN> #SKIP //TODO what is the purpose of skip? How relevant to semantics?
 }
 
-void expression(): {}
+void expression() #void: {}
 {
 	 (
                 (
-                        <INTEGER> | <IS_TRUE> | <IS_FALSE>
+                        integer() | is_true() | is_false()
                 )
 		
-                (
-                        binary_arith_op()
-                        ((
-                                (<MINUS_SIGN>)? <ID> (<OPEN_BRACKET> arg_list() <CLOSE_BRACKET>)?| <INTEGER> | <IS_TRUE> | <IS_FALSE>
-                        )
-			| <OPEN_BRACKET> expression() <CLOSE_BRACKET>)
-                )*
+                (//START OR (NEXT TOKEN = PLUS | MINUS )
+			(
+				(
+					(
+						<PLUS_SIGN> 
+		                        	(
+							(
+				                                (
+								minus_identifier()
+							        | identifier(false)
+								)
+								(<OPEN_BRACKET> arg_list() <CLOSE_BRACKET>)?| integer() | is_true() | is_false()
+			                       		)
+						| 
+							<OPEN_BRACKET> expression() <CLOSE_BRACKET>
+						)
+			                ) 
+					#PLUS_OP(2) 
+				)
+			)
+			|
+			(
+				(
+					(
+						<MINUS_SIGN>
+			                        (
+							(
+			        	                        (
+								minus_identifier()
+								| identifier(false)
+								)
+
+	(<OPEN_BRACKET> arg_list() <CLOSE_BRACKET>)?| integer() | is_true() | is_false()
+				                        )
+						| 
+							<OPEN_BRACKET> expression() <CLOSE_BRACKET>
+						)
+					)
+					#SUBTRACT_OP(2)
+		                )
+			)
+		)*
         )
-	|   (<MINUS_SIGN>)? <ID> ( 
+	|    minus_identifier() 
+	   | identifier(false) 
+	   ( 
 		(//start OR 
 			(
 				<OPEN_BRACKET> arg_list() <CLOSE_BRACKET>
 			) 
 			| 
 			( 
-				<INTEGER> | <IS_TRUE> | <IS_FALSE> 
+				integer() | is_true() | is_false() 
 				)? 
-				( binary_arith_op() 
-					(( 
-						(<MINUS_SIGN>)? <ID> (<OPEN_BRACKET> arg_list() <CLOSE_BRACKET>)? | <INTEGER> | <IS_TRUE> | <IS_FALSE> 
-					) 
-					| <OPEN_BRACKET> expression() <CLOSE_BRACKET>
+				(
+				  (
+					<MINUS_SIGN> 
+					(
+						( 
+						/*TODO negation?*/   minus_identifier() | identifier(false) (<OPEN_BRACKET> arg_list() <CLOSE_BRACKET>)? | integer() | is_true() | is_false() 
+						) 
+						| <OPEN_BRACKET> expression() <CLOSE_BRACKET>
 					)
-				)+ 
+				  )#SUBTRACT_OP(2)
+				  |
+				  (
+					<PLUS_SIGN>
+					(
+						( 
+							/*TODO negation?*/	(minus_identifier() | identifier(false) )(<OPEN_BRACKET> arg_list() <CLOSE_BRACKET>)? | integer() | is_true() | is_false() 
+						) 
+						| <OPEN_BRACKET> expression() <CLOSE_BRACKET>
+						)
+				  )#PLUS_OP(2)
+				)+ //TODO double check the + instead of * 
 			) 
 		 )? 
 	| <OPEN_BRACKET> expression() <CLOSE_BRACKET> 
 }
 
-void binary_arith_op(): {}
+void binary_arith_op() #void : {} //TODO string - string valid?
 {
-        <PLUS_SIGN> 
-        | <MINUS_SIGN> 
+        <PLUS_SIGN> #PLUS_OP(2) 
+        | <MINUS_SIGN> #SUBTRACT_OP(2)
 }    
 
-void condition(): {}
+void condition() #void: {}
 {
-        (
-                (//begin OR 
-                        <TILDA> condition()
+        (//BEGIN OR
+                ( 
+                        <TILDA> condition() #NEGATION(>0)
                 )
                 |
                 LOOKAHEAD(3)(
                         <OPEN_BRACKET> /*--going to cause conflict with expression last choice if no lookahead--*/ condition() <CLOSE_BRACKET>
                 )
                 |
-                (
-                        expression() comp_op() expression()
-                ) //end OR
-        )
+                (//re-write of comp_op 
+			expression()
+                        (//BEGIN OR
+
+				<EQUALS_SIGN> expression() #EQUAL(2)
+				| <NEGATION_EQUALS> expression() #NOT_EQUAL(2)
+				| <LESS_THAN> expression() #LESS_THAN(2)
+				| <EQUAL_LESS_THAN> expression() #EQ_LESS_THAN(2)
+				| <GREATER_THAN> expression() #GREATER_THAN(2)
+				| <EQUAL_GREATER_THAN> expression() #EQ_GREATER_THAN(2)
+			)//END OR
+                ) 
+        )//END OR
         (
-                LOOKAHEAD(2)( <OR_SIGN> | <AND_SIGN> ) 
-                condition()
+                LOOKAHEAD(2)(//BEGIN OR
+		 	<OR_SIGN> condition() #OR(2) 
+			| <AND_SIGN> condition() #AND(2)
+		) 
         )? 
 }
 
-void comp_op(): {}
-{
-	<EQUALS_SIGN> 
-	| <NEGATION_EQUALS> 
-	| <LESS_THAN>
-	| <EQUAL_LESS_THAN>
-	| <GREATER_THAN>
-	| <EQUAL_GREATER_THAN>
-}
-
-void arg_list(): {}
+void arg_list() #void : {}
 {
 	(nemp_arg_list())?
 }
 
-void nemp_arg_list(): {}
+void nemp_arg_list() #ARG_LIST : {}
 {
-	 (<ID> (<COMMA> <ID>)* ) 
+	 (identifier(false) (<COMMA> identifier(false))* ) 
 }
+
+String identifier(Boolean isMinus) #ID: {Token t;}
+{
+	t = <ID> {
+		String image = t.image;
+		if (isMinus)
+			image = "-" + t.image;
+		jjtThis.value = image; 
+		return image;
+	} //generated non-terminal ID  
+}
+
+String integer() #INT: {Token t;} 
+{
+	t = <INTEGER> {jjtThis.value = t.image; return t.image;} //generated non-terminal ID  
+}
+
+String is_true() #IS_TRUE: {Token t;}
+{
+	t = <IS_TRUE> {jjtThis.value = t.image; return t.image;} //generated non-terminal ID  
+}
+
+String is_false() #IS_FALSE: {Token t;}
+{
+	t = <IS_FALSE> {jjtThis.value = t.image; return t.image;} //generated non-terminal ID  
+}
+
+void minus_identifier() #void: {Token t;}
+{
+	t = <MINUS_SIGN> identifier(true) {}  //generated non-terminal ID
+} 

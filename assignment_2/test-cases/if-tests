@@ -1,0 +1,10 @@
+void meme(a: integer, c: boolean) is
+begin
+  my_id := -3;
+  return();
+end
+
+main
+begin
+end
+

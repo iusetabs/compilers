@@ -1,0 +1,5 @@
+main
+
+begin
+  variable main:integer;
+end

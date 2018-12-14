@@ -6,14 +6,14 @@ class ASTDecl extends SimpleNode {
     super(id);
   }
 
-  public ASTDecl(ExprLang p, int id) {
+  public ASTDecl(MyParser p, int id) {
     super(p, id);
   }
 
 
   /** Accept the visitor. **/
-  public Object jjtAccept(ExprLangVisitor visitor, Object data) {
+  public Object jjtAccept(MyParserVisitor visitor, Object data) {
     return visitor.visit(this, data);
   }
 }
-/* JavaCC - OriginalChecksum=4b4daa3bb84850c696e456a32f201003 (do not edit this line) */
+/* JavaCC - OriginalChecksum=99eded71cd375a3ddc61f37a79f1cbc6 (do not edit this line) */
