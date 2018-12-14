@@ -26,26 +26,22 @@ public interface MyParserTreeConstants
   public int JJTWHILE_CODE = 22;
   public int JJTWHILE = 23;
   public int JJTSKIP = 24;
-  public int JJTA_PLUS_OP = 25;
-  public int JJTA_SUBTRACT_OP = 26;
-  public int JJTB_SUBTRACT_OP = 27;
-  public int JJTB_PLUS_OP = 28;
-  public int JJTPLUS_OP = 29;
-  public int JJTSUBTRACT_OP = 30;
-  public int JJTNEGATION = 31;
-  public int JJTEQUAL = 32;
-  public int JJTNOT_EQUAL = 33;
-  public int JJTLESS_THAN = 34;
-  public int JJTEQ_LESS_THAN = 35;
-  public int JJTGREATER_THAN = 36;
-  public int JJTEQ_GREATER_THAN = 37;
-  public int JJTOR = 38;
-  public int JJTAND = 39;
-  public int JJTARG_LIST = 40;
-  public int JJTID = 41;
-  public int JJTINT = 42;
-  public int JJTIS_TRUE = 43;
-  public int JJTIS_FALSE = 44;
+  public int JJTPLUS_OP = 25;
+  public int JJTSUBTRACT_OP = 26;
+  public int JJTNEGATION = 27;
+  public int JJTEQUAL = 28;
+  public int JJTNOT_EQUAL = 29;
+  public int JJTLESS_THAN = 30;
+  public int JJTEQ_LESS_THAN = 31;
+  public int JJTGREATER_THAN = 32;
+  public int JJTEQ_GREATER_THAN = 33;
+  public int JJTOR = 34;
+  public int JJTAND = 35;
+  public int JJTARG_LIST = 36;
+  public int JJTID = 37;
+  public int JJTINT = 38;
+  public int JJTIS_TRUE = 39;
+  public int JJTIS_FALSE = 40;
 
 
   public String[] jjtNodeName = {
@@ -74,10 +70,6 @@ public interface MyParserTreeConstants
     "WHILE_CODE",
     "WHILE",
     "SKIP",
-    "a_PLUS_OP",
-    "a_SUBTRACT_OP",
-    "b_SUBTRACT_OP",
-    "b_PLUS_OP",
     "PLUS_OP",
     "SUBTRACT_OP",
     "NEGATION",
@@ -96,4 +88,4 @@ public interface MyParserTreeConstants
     "IS_FALSE",
   };
 }
-/* JavaCC - OriginalChecksum=ab5a8bd7e9230f5f4ffca732cf5db242 (do not edit this line) */
+/* JavaCC - OriginalChecksum=5ba2594529b72c05612fc5afbd41e6ff (do not edit this line) */

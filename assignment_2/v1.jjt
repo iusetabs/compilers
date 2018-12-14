@@ -84,21 +84,15 @@ TOKEN_MGR_DECLS: {
 }
 
 SKIP : /* COMMENTS */ {
-	"/*" { commentNesting++;
-	       System.out.println("Comment"); } : IN_COMMENT
-     | < SINGLE_COMMENT:  "//" (~["\n"])+ >  { System.out.println("One line comment found"); }
+	"/*" { commentNesting++; } : IN_COMMENT
+     | < SINGLE_COMMENT:  "//" (~["\n"])+ >  
 }
 
 <IN_COMMENT> SKIP : {
 	"/*" { commentNesting++; }
      |  "*/" { commentNesting--;
 		if (commentNesting == 0){
-			System.out.println("Comments closed");
 			SwitchTo(DEFAULT);
-		}
-		else{
-			System.out.println("Comments not shut yet");
-			System.out.println("Comments left: " + Integer.toString(commentNesting));
 		}
 	     }
      | <~[]>
@@ -274,7 +268,7 @@ void expression() #void: {}
 							<OPEN_BRACKET> expression() <CLOSE_BRACKET>
 						)
 			                ) 
-					#a_PLUS_OP(2) 
+					#PLUS_OP(2) 
 				)
 			)
 			|
@@ -295,7 +289,7 @@ void expression() #void: {}
 							<OPEN_BRACKET> expression() <CLOSE_BRACKET>
 						)
 					)
-					#a_SUBTRACT_OP(2)
+					#SUBTRACT_OP(2)
 		                )
 			)
 		)*
@@ -320,7 +314,7 @@ void expression() #void: {}
 						) 
 						| <OPEN_BRACKET> expression() <CLOSE_BRACKET>
 					)
-				  )#b_SUBTRACT_OP(2)
+				  )#SUBTRACT_OP(2)
 				  |
 				  (
 					<PLUS_SIGN>
@@ -330,7 +324,7 @@ void expression() #void: {}
 						) 
 						| <OPEN_BRACKET> expression() <CLOSE_BRACKET>
 						)
-				  )#b_PLUS_OP(2)
+				  )#PLUS_OP(2)
 				)+ //TODO double check the + instead of * 
 			) 
 		 )? 

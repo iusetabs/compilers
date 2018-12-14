@@ -801,7 +801,7 @@
         }
         switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
         case PLUS_SIGN:
-                                          ASTa_PLUS_OP jjtn001 = new ASTa_PLUS_OP(JJTA_PLUS_OP);
+                                          ASTPLUS_OP jjtn001 = new ASTPLUS_OP(JJTPLUS_OP);
                                           boolean jjtc001 = true;
                                           jjtree.openNodeScope(jjtn001);
           try {
@@ -884,7 +884,7 @@
           }
           break;
         case MINUS_SIGN:
-                                          ASTa_SUBTRACT_OP jjtn002 = new ASTa_SUBTRACT_OP(JJTA_SUBTRACT_OP);
+                                          ASTSUBTRACT_OP jjtn002 = new ASTSUBTRACT_OP(JJTSUBTRACT_OP);
                                           boolean jjtc002 = true;
                                           jjtree.openNodeScope(jjtn002);
           try {
@@ -1024,7 +1024,7 @@
           while (true) {
             switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
             case MINUS_SIGN:
-                                    ASTb_SUBTRACT_OP jjtn003 = new ASTb_SUBTRACT_OP(JJTB_SUBTRACT_OP);
+                                    ASTSUBTRACT_OP jjtn003 = new ASTSUBTRACT_OP(JJTSUBTRACT_OP);
                                     boolean jjtc003 = true;
                                     jjtree.openNodeScope(jjtn003);
               try {
@@ -1098,7 +1098,7 @@
               }
               break;
             case PLUS_SIGN:
-                                    ASTb_PLUS_OP jjtn004 = new ASTb_PLUS_OP(JJTB_PLUS_OP);
+                                    ASTPLUS_OP jjtn004 = new ASTPLUS_OP(JJTPLUS_OP);
                                     boolean jjtc004 = true;
                                     jjtree.openNodeScope(jjtn004);
               try {
@@ -1687,6 +1687,21 @@
     finally { jj_save(1, xla); }
   }
 
+  static private boolean jj_3R_23() {
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_3R_30()) {
+    jj_scanpos = xsp;
+    if (jj_3R_31()) return true;
+    }
+    return false;
+  }
+
+  static private boolean jj_3R_30() {
+    if (jj_scan_token(PLUS_SIGN)) return true;
+    return false;
+  }
+
   static private boolean jj_3R_20() {
     if (jj_3R_27()) return true;
     return false;
@@ -1957,21 +1972,6 @@
     jj_scanpos = xsp;
     if (jj_3R_6()) return true;
     }
-    return false;
-  }
-
-  static private boolean jj_3R_23() {
-    Token xsp;
-    xsp = jj_scanpos;
-    if (jj_3R_30()) {
-    jj_scanpos = xsp;
-    if (jj_3R_31()) return true;
-    }
-    return false;
-  }
-
-  static private boolean jj_3R_30() {
-    if (jj_scan_token(PLUS_SIGN)) return true;
     return false;
   }
 

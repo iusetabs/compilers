@@ -868,11 +868,6 @@ static void SkipLexicalActions(Token matchedToken)
       case 1 :
          image.append(input_stream.GetSuffix(jjimageLen + (lengthOfMatch = jjmatchedPos + 1)));
                commentNesting++;
-               System.out.println("Comment");
-         break;
-      case 2 :
-         image.append(input_stream.GetSuffix(jjimageLen + (lengthOfMatch = jjmatchedPos + 1)));
-                                               System.out.println("One line comment found");
          break;
       case 3 :
          image.append(input_stream.GetSuffix(jjimageLen + (lengthOfMatch = jjmatchedPos + 1)));
@@ -882,12 +877,7 @@ static void SkipLexicalActions(Token matchedToken)
          image.append(input_stream.GetSuffix(jjimageLen + (lengthOfMatch = jjmatchedPos + 1)));
                commentNesting--;
                 if (commentNesting == 0){
-                        System.out.println("Comments closed");
                         SwitchTo(DEFAULT);
-                }
-                else{
-                        System.out.println("Comments not shut yet");
-                        System.out.println("Comments left: " + Integer.toString(commentNesting));
                 }
          break;
       default :

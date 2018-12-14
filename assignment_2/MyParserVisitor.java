@@ -26,10 +26,6 @@ public interface MyParserVisitor
   public Object visit(ASTWHILE_CODE node, Object data);
   public Object visit(ASTWHILE node, Object data);
   public Object visit(ASTSKIP node, Object data);
-  public Object visit(ASTa_PLUS_OP node, Object data);
-  public Object visit(ASTa_SUBTRACT_OP node, Object data);
-  public Object visit(ASTb_SUBTRACT_OP node, Object data);
-  public Object visit(ASTb_PLUS_OP node, Object data);
   public Object visit(ASTPLUS_OP node, Object data);
   public Object visit(ASTSUBTRACT_OP node, Object data);
   public Object visit(ASTNEGATION node, Object data);
@@ -47,4 +43,4 @@ public interface MyParserVisitor
   public Object visit(ASTIS_TRUE node, Object data);
   public Object visit(ASTIS_FALSE node, Object data);
 }
-/* JavaCC - OriginalChecksum=86f2868794be9b54b0dd4f9aed2492b3 (do not edit this line) */
+/* JavaCC - OriginalChecksum=1a1ef4aa63dc81bb16e95b6f9180afb1 (do not edit this line) */

@@ -88,21 +88,15 @@ TOKEN_MGR_DECLS: {
 }
 
 SKIP : /* COMMENTS */ {
-	"/*" { commentNesting++;
-	       System.out.println("Comment"); } : IN_COMMENT
-     | < SINGLE_COMMENT:  "//" (~["\n"])+ >  { System.out.println("One line comment found"); }
+	"/*" { commentNesting++; } : IN_COMMENT
+     | < SINGLE_COMMENT:  "//" (~["\n"])+ >  
 }
 
 <IN_COMMENT> SKIP : {
 	"/*" { commentNesting++; }
      |  "*/" { commentNesting--;
 		if (commentNesting == 0){
-			System.out.println("Comments closed");
 			SwitchTo(DEFAULT);
-		}
-		else{
-			System.out.println("Comments not shut yet");
-			System.out.println("Comments left: " + Integer.toString(commentNesting));
 		}
 	     }
      | <~[]>
@@ -854,9 +848,9 @@ void expression()      : {}
 		
                 (//START OR (NEXT TOKEN = PLUS | MINUS )
 			(
-				(/*@bgen(jjtree) #a_PLUS_OP( 2) */
+				(/*@bgen(jjtree) #PLUS_OP( 2) */
                                         {
-                                          ASTa_PLUS_OP jjtn001 = new ASTa_PLUS_OP(JJTA_PLUS_OP);
+                                          ASTPLUS_OP jjtn001 = new ASTPLUS_OP(JJTPLUS_OP);
                                           boolean jjtc001 = true;
                                           jjtree.openNodeScope(jjtn001);
                                         }
@@ -896,14 +890,14 @@ void expression()      : {}
                                           }
                                         }
 /*@egen*/ 
-					              
+					            
 				)
 			)
 			|
 			(
-				(/*@bgen(jjtree) #a_SUBTRACT_OP( 2) */
+				(/*@bgen(jjtree) #SUBTRACT_OP( 2) */
                                         {
-                                          ASTa_SUBTRACT_OP jjtn002 = new ASTa_SUBTRACT_OP(JJTA_SUBTRACT_OP);
+                                          ASTSUBTRACT_OP jjtn002 = new ASTSUBTRACT_OP(JJTSUBTRACT_OP);
                                           boolean jjtc002 = true;
                                           jjtree.openNodeScope(jjtn002);
                                         }
@@ -944,7 +938,7 @@ void expression()      : {}
                                           }
                                         }
 /*@egen*/
-					                 
+					               
 		                )
 			)
 		)*
@@ -960,9 +954,9 @@ void expression()      : {}
 			( 
 				integer() | is_true() | is_false() 
 				)? 
-				(/*@bgen(jjtree) #b_SUBTRACT_OP( 2) */
+				(/*@bgen(jjtree) #SUBTRACT_OP( 2) */
                                   {
-                                    ASTb_SUBTRACT_OP jjtn003 = new ASTb_SUBTRACT_OP(JJTB_SUBTRACT_OP);
+                                    ASTSUBTRACT_OP jjtn003 = new ASTSUBTRACT_OP(JJTSUBTRACT_OP);
                                     boolean jjtc003 = true;
                                     jjtree.openNodeScope(jjtn003);
                                   }
@@ -996,10 +990,10 @@ void expression()      : {}
                                       jjtree.closeNodeScope(jjtn003,  2);
                                     }
                                   }
-/*@egen*/                 
-				  |/*@bgen(jjtree) #b_PLUS_OP( 2) */
+/*@egen*/               
+				  |/*@bgen(jjtree) #PLUS_OP( 2) */
                                   {
-                                    ASTb_PLUS_OP jjtn004 = new ASTb_PLUS_OP(JJTB_PLUS_OP);
+                                    ASTPLUS_OP jjtn004 = new ASTPLUS_OP(JJTPLUS_OP);
                                     boolean jjtc004 = true;
                                     jjtree.openNodeScope(jjtn004);
                                   }
@@ -1033,7 +1027,7 @@ void expression()      : {}
                                       jjtree.closeNodeScope(jjtn004,  2);
                                     }
                                   }
-/*@egen*/             
+/*@egen*/           
 				)+ //TODO double check the + instead of * 
 			) 
 		 )? 
