@@ -1,4 +1,4 @@
 *.swp
 *.swo
-.class
-.cache
+*.class
+*.cache

@@ -10,15 +10,16 @@ public interface MyParserVisitor
   public Object visit(ASTFunction node, Object data);
   public Object visit(ASTParameter node, Object data);
   public Object visit(ASTMain_Code node, Object data);
-  public Object visit(ASTASSIGN_OP node, Object data);
   public Object visit(ASTIF node, Object data);
   public Object visit(ASTELSE node, Object data);
   public Object visit(ASTWHILE node, Object data);
-  public Object visit(ASTexpression node, Object data);
   public Object visit(ASTPLUS_OP node, Object data);
   public Object visit(ASTSUBTRACT_OP node, Object data);
   public Object visit(ASTcondition node, Object data);
   public Object visit(ASTlist_of_args node, Object data);
   public Object visit(ASTID node, Object data);
+  public Object visit(ASTINT node, Object data);
+  public Object visit(ASTIS_TRUE node, Object data);
+  public Object visit(ASTIS_FALSE node, Object data);
 }
-/* JavaCC - OriginalChecksum=0d6f90575daa2fc1d03d7ee76ed29e4b (do not edit this line) */
+/* JavaCC - OriginalChecksum=bc5b3046d2758230f22f2ea39d8cd443 (do not edit this line) */
