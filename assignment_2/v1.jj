@@ -248,7 +248,7 @@ void var_decl()                : {/*@bgen(jjtree) variable_decl */
 {/*@bgen(jjtree) variable_decl */
         try {
 /*@egen*/
-	<DECL_VARIABLE> identifier() <COLUMN> type()/*@bgen(jjtree)*/
+	<DECL_VARIABLE> identifier(false) <COLUMN> type()/*@bgen(jjtree)*/
         } catch (Throwable jjte000) {
           if (jjtc000) {
             jjtree.clearNodeScope(jjtn000);
@@ -279,7 +279,7 @@ void const_decl()                : {/*@bgen(jjtree) constant_decl */
 {/*@bgen(jjtree) constant_decl */
         try {
 /*@egen*/
-	<DECL_CONSTANT> identifier() <COLUMN> type() <IS_VALUE> expression()/*@bgen(jjtree)*/
+	<DECL_CONSTANT> identifier(false) <COLUMN> type() <IS_VALUE> expression()/*@bgen(jjtree)*/
         } catch (Throwable jjte000) {
           if (jjtc000) {
             jjtree.clearNodeScope(jjtn000);
@@ -349,7 +349,7 @@ void function()           : {/*@bgen(jjtree) Function */
 {/*@bgen(jjtree) Function */
         try {
 /*@egen*/
-	type() identifier() <OPEN_BRACKET> parameter_list() <CLOSE_BRACKET> <IS> decl_list() <BEGIN> statement_block() <RETURN> <OPEN_BRACKET> (expression())? <CLOSE_BRACKET> <SEMICOLUMN><END>/*@bgen(jjtree)*/
+	type() identifier(false) <OPEN_BRACKET> parameter_list() <CLOSE_BRACKET> <IS> decl_list() <BEGIN> statement_block() <RETURN> <OPEN_BRACKET> (expression())? <CLOSE_BRACKET> <SEMICOLUMN><END>/*@bgen(jjtree)*/
         } catch (Throwable jjte000) {
           if (jjtc000) {
             jjtree.clearNodeScope(jjtn000);
@@ -380,33 +380,33 @@ void parameter_list()       : {}
 
 void nemp_parameter_list()       :  {}
 {
-	identifier() <COLUMN>/*@bgen(jjtree) #Parameter( 2) */
-                              {
-                                ASTParameter jjtn001 = new ASTParameter(JJTPARAMETER);
-                                boolean jjtc001 = true;
-                                jjtree.openNodeScope(jjtn001);
-                              }
-                              try {
+	identifier(false) <COLUMN>/*@bgen(jjtree) #Parameter( 2) */
+                                   {
+                                     ASTParameter jjtn001 = new ASTParameter(JJTPARAMETER);
+                                     boolean jjtc001 = true;
+                                     jjtree.openNodeScope(jjtn001);
+                                   }
+                                   try {
 /*@egen*/ type()/*@bgen(jjtree)*/
-                              } catch (Throwable jjte001) {
-                                if (jjtc001) {
-                                  jjtree.clearNodeScope(jjtn001);
-                                  jjtc001 = false;
-                                } else {
-                                  jjtree.popNode();
-                                }
-                                if (jjte001 instanceof RuntimeException) {
-                                  throw (RuntimeException)jjte001;
-                                }
-                                if (jjte001 instanceof ParseException) {
-                                  throw (ParseException)jjte001;
-                                }
-                                throw (Error)jjte001;
-                              } finally {
-                                if (jjtc001) {
-                                  jjtree.closeNodeScope(jjtn001,  2);
-                                }
-                              }
+                                   } catch (Throwable jjte001) {
+                                     if (jjtc001) {
+                                       jjtree.clearNodeScope(jjtn001);
+                                       jjtc001 = false;
+                                     } else {
+                                       jjtree.popNode();
+                                     }
+                                     if (jjte001 instanceof RuntimeException) {
+                                       throw (RuntimeException)jjte001;
+                                     }
+                                     if (jjte001 instanceof ParseException) {
+                                       throw (ParseException)jjte001;
+                                     }
+                                     throw (Error)jjte001;
+                                   } finally {
+                                     if (jjtc001) {
+                                       jjtree.closeNodeScope(jjtn001,  2);
+                                     }
+                                   }
 /*@egen*/               (<COMMA> nemp_parameter_list())? 
 }
 
@@ -448,7 +448,7 @@ void statement_block()      : {}
 
 void statement()       : {Token t;}
 {
-	identifier() ( <IS_VALUE> expression() | <OPEN_BRACKET> arg_list() <CLOSE_BRACKET> ) <SEMICOLUMN> {} 
+	identifier(false) ( <IS_VALUE> expression() | <OPEN_BRACKET> arg_list() <CLOSE_BRACKET> ) <SEMICOLUMN> {} 
 	| <BEGIN> statement_block()/*@bgen(jjtree) void */
                                     {
                                       ASTvoid jjtn001 = new ASTvoid(JJTVOID);
@@ -528,11 +528,11 @@ void expression()      : {}
                         integer() | is_true() | is_false()
                 )
 		
-                (
+                (//START OR (NEXT TOKEN = PLUS | MINUS )
 			(
-				(/*@bgen(jjtree) #PLUS_OP( 2) */
+				(/*@bgen(jjtree) #a_PLUS_OP( 2) */
                                         {
-                                          ASTPLUS_OP jjtn001 = new ASTPLUS_OP(JJTPLUS_OP);
+                                          ASTa_PLUS_OP jjtn001 = new ASTa_PLUS_OP(JJTA_PLUS_OP);
                                           boolean jjtc001 = true;
                                           jjtree.openNodeScope(jjtn001);
                                         }
@@ -542,7 +542,11 @@ void expression()      : {}
 						<PLUS_SIGN> 
 		                        	(
 							(
-				                                (<MINUS_SIGN>)? identifier() (<OPEN_BRACKET> arg_list() <CLOSE_BRACKET>)?| integer() | is_true() | is_false()
+				                                (
+								minus_identifier()
+							        | identifier(false)
+								)
+								(<OPEN_BRACKET> arg_list() <CLOSE_BRACKET>)?| integer() | is_true() | is_false()
 			                       		)
 						| 
 							<OPEN_BRACKET> expression() <CLOSE_BRACKET>
@@ -568,14 +572,14 @@ void expression()      : {}
                                           }
                                         }
 /*@egen*/ 
-					            
-				)+
+					              
+				)
 			)
 			|
 			(
-				(/*@bgen(jjtree) #SUBTRACT_OP( 2) */
+				(/*@bgen(jjtree) #a_SUBTRACT_OP( 2) */
                                         {
-                                          ASTSUBTRACT_OP jjtn002 = new ASTSUBTRACT_OP(JJTSUBTRACT_OP);
+                                          ASTa_SUBTRACT_OP jjtn002 = new ASTa_SUBTRACT_OP(JJTA_SUBTRACT_OP);
                                           boolean jjtc002 = true;
                                           jjtree.openNodeScope(jjtn002);
                                         }
@@ -585,7 +589,12 @@ void expression()      : {}
 						<MINUS_SIGN>
 			                        (
 							(
-			        	                        (<MINUS_SIGN>)? identifier() (<OPEN_BRACKET> arg_list() <CLOSE_BRACKET>)?| integer() | is_true() | is_false()
+			        	                        (
+								minus_identifier()
+								| identifier(false)
+								)
+
+	(<OPEN_BRACKET> arg_list() <CLOSE_BRACKET>)?| integer() | is_true() | is_false()
 				                        )
 						| 
 							<OPEN_BRACKET> expression() <CLOSE_BRACKET>
@@ -611,12 +620,14 @@ void expression()      : {}
                                           }
                                         }
 /*@egen*/
-					               
-		                )*
+					                 
+		                )
 			)
-		)
+		)*
         )
-	|   (<MINUS_SIGN>)? identifier() ( 
+	|    minus_identifier() 
+	   | identifier(false) 
+	   ( 
 		(//start OR 
 			(
 				<OPEN_BRACKET> arg_list() <CLOSE_BRACKET>
@@ -625,9 +636,9 @@ void expression()      : {}
 			( 
 				integer() | is_true() | is_false() 
 				)? 
-				(/*@bgen(jjtree) #SUBTRACT_OP( 2) */
+				(/*@bgen(jjtree) #b_SUBTRACT_OP( 2) */
                                   {
-                                    ASTSUBTRACT_OP jjtn003 = new ASTSUBTRACT_OP(JJTSUBTRACT_OP);
+                                    ASTb_SUBTRACT_OP jjtn003 = new ASTb_SUBTRACT_OP(JJTB_SUBTRACT_OP);
                                     boolean jjtc003 = true;
                                     jjtree.openNodeScope(jjtn003);
                                   }
@@ -637,7 +648,7 @@ void expression()      : {}
 					<MINUS_SIGN> 
 					(
 						( 
-						/*TODO negation?*/	(<MINUS_SIGN>)? identifier() (<OPEN_BRACKET> arg_list() <CLOSE_BRACKET>)? | integer() | is_true() | is_false() 
+						/*TODO negation?*/   minus_identifier() | identifier(false) (<OPEN_BRACKET> arg_list() <CLOSE_BRACKET>)? | integer() | is_true() | is_false() 
 						) 
 						| <OPEN_BRACKET> expression() <CLOSE_BRACKET>
 					)
@@ -661,10 +672,10 @@ void expression()      : {}
                                       jjtree.closeNodeScope(jjtn003,  2);
                                     }
                                   }
-/*@egen*/               
-				  |/*@bgen(jjtree) #PLUS_OP( 2) */
+/*@egen*/                 
+				  |/*@bgen(jjtree) #b_PLUS_OP( 2) */
                                   {
-                                    ASTPLUS_OP jjtn004 = new ASTPLUS_OP(JJTPLUS_OP);
+                                    ASTb_PLUS_OP jjtn004 = new ASTb_PLUS_OP(JJTB_PLUS_OP);
                                     boolean jjtc004 = true;
                                     jjtree.openNodeScope(jjtn004);
                                   }
@@ -674,7 +685,7 @@ void expression()      : {}
 					<PLUS_SIGN>
 					(
 						( 
-							/*TODO negation?*/	(<MINUS_SIGN>)? identifier() (<OPEN_BRACKET> arg_list() <CLOSE_BRACKET>)? | integer() | is_true() | is_false() 
+							/*TODO negation?*/	(minus_identifier() | identifier(false) )(<OPEN_BRACKET> arg_list() <CLOSE_BRACKET>)? | integer() | is_true() | is_false() 
 						) 
 						| <OPEN_BRACKET> expression() <CLOSE_BRACKET>
 						)
@@ -698,8 +709,8 @@ void expression()      : {}
                                       jjtree.closeNodeScope(jjtn004,  2);
                                     }
                                   }
-/*@egen*/           
-				)+ 
+/*@egen*/             
+				)+ //TODO double check the + instead of * 
 			) 
 		 )? 
 	| <OPEN_BRACKET> expression() <CLOSE_BRACKET> 
@@ -807,7 +818,7 @@ void nemp_arg_list()               : {/*@bgen(jjtree) list_of_args */
 {/*@bgen(jjtree) list_of_args */
          try {
 /*@egen*/
-	 (identifier() (<COMMA> identifier())* )/*@bgen(jjtree)*/
+	 (identifier(false) (<COMMA> identifier(false))* )/*@bgen(jjtree)*/
          } catch (Throwable jjte000) {
            if (jjtc000) {
              jjtree.clearNodeScope(jjtn000);
@@ -830,10 +841,10 @@ void nemp_arg_list()               : {/*@bgen(jjtree) list_of_args */
 /*@egen*/ 
 }
 
-String identifier()    : {/*@bgen(jjtree) ID */
-                          ASTID jjtn000 = new ASTID(JJTID);
-                          boolean jjtc000 = true;
-                          jjtree.openNodeScope(jjtn000);
+String identifier(Boolean isMinus)    : {/*@bgen(jjtree) ID */
+                                         ASTID jjtn000 = new ASTID(JJTID);
+                                         boolean jjtc000 = true;
+                                         jjtree.openNodeScope(jjtn000);
 /*@egen*/Token t;}
 {/*@bgen(jjtree) ID */
         try {
@@ -843,7 +854,13 @@ String identifier()    : {/*@bgen(jjtree) ID */
                    jjtree.closeNodeScope(jjtn000, true);
                    jjtc000 = false;
                  }
-/*@egen*/ {jjtn000.value = t.image; return t.image;}/*@bgen(jjtree)*/
+/*@egen*/ {
+		String image = t.image;
+		if (isMinus)
+			image = "-" + t.image;
+		jjtn000.value = image; 
+		return image;
+	}/*@bgen(jjtree)*/
         } finally {
           if (jjtc000) {
             jjtree.closeNodeScope(jjtn000, true);
@@ -917,3 +934,8 @@ String is_false()          : {/*@bgen(jjtree) IS_FALSE */
         }
 /*@egen*/ //generated non-terminal ID  
 }
+
+void minus_identifier()      : {Token t;}
+{
+	t = <MINUS_SIGN> identifier(true) {}  //generated non-terminal ID
+} 

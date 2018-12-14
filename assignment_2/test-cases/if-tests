@@ -1,0 +1,13 @@
+void meme() is
+begin
+  if my_cond < test
+  begin
+    my_id := -3;
+  end 
+  return(expression);
+end
+
+main
+begin
+end
+

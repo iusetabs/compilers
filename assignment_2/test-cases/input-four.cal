@@ -1,8 +1,8 @@
 
-integer test_fn() is
+integer test_fn(b: integer, c: integer) is
 	variable i: integer;
 begin
-	d := 0 + 1;
+	d := -h;
 	return ();
 end
 

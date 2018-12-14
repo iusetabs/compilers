@@ -189,12 +189,12 @@ void decl() #void : //Can skip this
 
 void var_decl() #variable_decl : {} 
 {
-	<DECL_VARIABLE> identifier() <COLUMN> type()
+	<DECL_VARIABLE> identifier(false) <COLUMN> type()
 }
 	
 void const_decl() #constant_decl : {}
 {
-	<DECL_CONSTANT> identifier() <COLUMN> type() <IS_VALUE> expression()
+	<DECL_CONSTANT> identifier(false) <COLUMN> type() <IS_VALUE> expression()
 }
 
 void type() #VAL_TYPE : {Token t;}
@@ -211,7 +211,7 @@ void func_list() #void : {}
 
 void function() #Function : {}
 {
-	type() identifier() <OPEN_BRACKET> parameter_list() <CLOSE_BRACKET> <IS> decl_list() <BEGIN> statement_block() <RETURN> <OPEN_BRACKET> (expression())? <CLOSE_BRACKET> <SEMICOLUMN><END>
+	type() identifier(false) <OPEN_BRACKET> parameter_list() <CLOSE_BRACKET> <IS> decl_list() <BEGIN> statement_block() <RETURN> <OPEN_BRACKET> (expression())? <CLOSE_BRACKET> <SEMICOLUMN><END>
 
 }
 
@@ -222,7 +222,7 @@ void parameter_list() #void : {}
 
 void nemp_parameter_list() #void :  {}
 {
-	identifier() <COLUMN> type() #Parameter(2) (<COMMA> nemp_parameter_list())? 
+	identifier(false) <COLUMN> type() #Parameter(2) (<COMMA> nemp_parameter_list())? 
 }
 
 void main() #Main_Code : {}
@@ -237,7 +237,7 @@ void statement_block() #void: {}
 
 void statement() #void : {Token t;}
 {
-	identifier() ( <IS_VALUE> expression() | <OPEN_BRACKET> arg_list() <CLOSE_BRACKET> ) <SEMICOLUMN> {} 
+	identifier(false) ( <IS_VALUE> expression() | <OPEN_BRACKET> arg_list() <CLOSE_BRACKET> ) <SEMICOLUMN> {} 
 	| <BEGIN> statement_block() <END> #void
 	| <IF> condition() <BEGIN> statement_block() <END> #IF
 	| <ELSE> <BEGIN> statement_block() <END> #ELSE
@@ -252,21 +252,25 @@ void expression() #void: {}
                         integer() | is_true() | is_false()
                 )
 		
-                (
+                (//START OR (NEXT TOKEN = PLUS | MINUS )
 			(
 				(
 					(
 						<PLUS_SIGN> 
 		                        	(
 							(
-				                                (<MINUS_SIGN>)? identifier() (<OPEN_BRACKET> arg_list() <CLOSE_BRACKET>)?| integer() | is_true() | is_false()
+				                                (
+								minus_identifier()
+							        | identifier(false)
+								)
+								(<OPEN_BRACKET> arg_list() <CLOSE_BRACKET>)?| integer() | is_true() | is_false()
 			                       		)
 						| 
 							<OPEN_BRACKET> expression() <CLOSE_BRACKET>
 						)
 			                ) 
-					#PLUS_OP(2) 
-				)+
+					#a_PLUS_OP(2) 
+				)
 			)
 			|
 			(
@@ -275,18 +279,25 @@ void expression() #void: {}
 						<MINUS_SIGN>
 			                        (
 							(
-			        	                        (<MINUS_SIGN>)? identifier() (<OPEN_BRACKET> arg_list() <CLOSE_BRACKET>)?| integer() | is_true() | is_false()
+			        	                        (
+								minus_identifier()
+								| identifier(false)
+								)
+
+	(<OPEN_BRACKET> arg_list() <CLOSE_BRACKET>)?| integer() | is_true() | is_false()
 				                        )
 						| 
 							<OPEN_BRACKET> expression() <CLOSE_BRACKET>
 						)
 					)
-					#SUBTRACT_OP(2)
-		                )*
+					#a_SUBTRACT_OP(2)
+		                )
 			)
-		)
+		)*
         )
-	|   (<MINUS_SIGN>)? identifier() ( 
+	|    minus_identifier() 
+	   | identifier(false) 
+	   ( 
 		(//start OR 
 			(
 				<OPEN_BRACKET> arg_list() <CLOSE_BRACKET>
@@ -300,22 +311,22 @@ void expression() #void: {}
 					<MINUS_SIGN> 
 					(
 						( 
-						/*TODO negation?*/	(<MINUS_SIGN>)? identifier() (<OPEN_BRACKET> arg_list() <CLOSE_BRACKET>)? | integer() | is_true() | is_false() 
+						/*TODO negation?*/   minus_identifier() | identifier(false) (<OPEN_BRACKET> arg_list() <CLOSE_BRACKET>)? | integer() | is_true() | is_false() 
 						) 
 						| <OPEN_BRACKET> expression() <CLOSE_BRACKET>
 					)
-				  )#SUBTRACT_OP(2)
+				  )#b_SUBTRACT_OP(2)
 				  |
 				  (
 					<PLUS_SIGN>
 					(
 						( 
-							/*TODO negation?*/	(<MINUS_SIGN>)? identifier() (<OPEN_BRACKET> arg_list() <CLOSE_BRACKET>)? | integer() | is_true() | is_false() 
+							/*TODO negation?*/	(minus_identifier() | identifier(false) )(<OPEN_BRACKET> arg_list() <CLOSE_BRACKET>)? | integer() | is_true() | is_false() 
 						) 
 						| <OPEN_BRACKET> expression() <CLOSE_BRACKET>
 						)
-				  )#PLUS_OP(2)
-				)+ 
+				  )#b_PLUS_OP(2)
+				)+ //TODO double check the + instead of * 
 			) 
 		 )? 
 	| <OPEN_BRACKET> expression() <CLOSE_BRACKET> 
@@ -365,12 +376,18 @@ void arg_list() #void : {}
 
 void nemp_arg_list() #list_of_args : {}
 {
-	 (identifier() (<COMMA> identifier())* ) 
+	 (identifier(false) (<COMMA> identifier(false))* ) 
 }
 
-String identifier() #ID: {Token t;}
+String identifier(Boolean isMinus) #ID: {Token t;}
 {
-	t = <ID> {jjtThis.value = t.image; return t.image;} //generated non-terminal ID  
+	t = <ID> {
+		String image = t.image;
+		if (isMinus)
+			image = "-" + t.image;
+		jjtThis.value = image; 
+		return image;
+	} //generated non-terminal ID  
 }
 
 String integer() #INT: {Token t;} 
@@ -387,3 +404,8 @@ String is_false() #IS_FALSE: {Token t;}
 {
 	t = <IS_FALSE> {jjtThis.value = t.image; return t.image;} //generated non-terminal ID  
 }
+
+void minus_identifier() #void: {Token t;}
+{
+	t = <MINUS_SIGN> identifier(true) {}  //generated non-terminal ID
+} 
