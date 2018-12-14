@@ -3,27 +3,48 @@ public interface MyParserVisitor
 {
   public Object visit(SimpleNode node, Object data);
   public Object visit(ASTProg_Start node, Object data);
-  public Object visit(ASTDecl_list node, Object data);
   public Object visit(ASTvariable_decl node, Object data);
   public Object visit(ASTconstant_decl node, Object data);
   public Object visit(ASTVAL_TYPE node, Object data);
   public Object visit(ASTFunction node, Object data);
+  public Object visit(ASTPARAM_LIST node, Object data);
+  public Object visit(ASTDECL_LIST node, Object data);
+  public Object visit(ASTFUNCTION_CODE node, Object data);
+  public Object visit(ASTRETURNS node, Object data);
   public Object visit(ASTParameter node, Object data);
-  public Object visit(ASTMain_Code node, Object data);
+  public Object visit(ASTMAIN node, Object data);
+  public Object visit(ASTMAIN_DECLS node, Object data);
+  public Object visit(ASTMAIN_CODE node, Object data);
+  public Object visit(ASTASSIGN_OP node, Object data);
+  public Object visit(ASTFUNC_CALL node, Object data);
+  public Object visit(ASTIF_CONDITION node, Object data);
+  public Object visit(ASTIF_CODE node, Object data);
   public Object visit(ASTIF node, Object data);
+  public Object visit(ASTELSE_CODE node, Object data);
   public Object visit(ASTELSE node, Object data);
+  public Object visit(ASTWHILE_CONDITION node, Object data);
+  public Object visit(ASTWHILE_CODE node, Object data);
   public Object visit(ASTWHILE node, Object data);
+  public Object visit(ASTSKIP node, Object data);
   public Object visit(ASTa_PLUS_OP node, Object data);
   public Object visit(ASTa_SUBTRACT_OP node, Object data);
   public Object visit(ASTb_SUBTRACT_OP node, Object data);
   public Object visit(ASTb_PLUS_OP node, Object data);
   public Object visit(ASTPLUS_OP node, Object data);
   public Object visit(ASTSUBTRACT_OP node, Object data);
-  public Object visit(ASTcondition node, Object data);
-  public Object visit(ASTlist_of_args node, Object data);
+  public Object visit(ASTNEGATION node, Object data);
+  public Object visit(ASTEQUAL node, Object data);
+  public Object visit(ASTNOT_EQUAL node, Object data);
+  public Object visit(ASTLESS_THAN node, Object data);
+  public Object visit(ASTEQ_LESS_THAN node, Object data);
+  public Object visit(ASTGREATER_THAN node, Object data);
+  public Object visit(ASTEQ_GREATER_THAN node, Object data);
+  public Object visit(ASTOR node, Object data);
+  public Object visit(ASTAND node, Object data);
+  public Object visit(ASTARG_LIST node, Object data);
   public Object visit(ASTID node, Object data);
   public Object visit(ASTINT node, Object data);
   public Object visit(ASTIS_TRUE node, Object data);
   public Object visit(ASTIS_FALSE node, Object data);
 }
-/* JavaCC - OriginalChecksum=98d0490beed09e89a4ae67d390db4fd9 (do not edit this line) */
+/* JavaCC - OriginalChecksum=86f2868794be9b54b0dd4f9aed2492b3 (do not edit this line) */

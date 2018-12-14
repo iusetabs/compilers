@@ -1,10 +1,7 @@
-void meme() is
+void meme(a: integer, c: boolean) is
 begin
-  if my_cond < test
-  begin
-    my_id := -3;
-  end 
-  return(expression);
+  my_id := -3;
+  return();
 end
 
 main

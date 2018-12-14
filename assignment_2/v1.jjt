@@ -177,7 +177,7 @@ SimpleNode Prog() #Prog_Start :
 void decl_list() #void :
 {}
 {
-	( {}#Decl_list decl() <SEMICOLUMN> decl_list() )?
+	( decl() <SEMICOLUMN> decl_list() )?
 }
 
 void decl() #void : //Can skip this
@@ -209,9 +209,9 @@ void func_list() #void : {}
 	(function() func_list())?	
 }
 
-void function() #Function : {}
+void function() #Function: {}
 {
-	type() identifier(false) <OPEN_BRACKET> parameter_list() <CLOSE_BRACKET> <IS> decl_list() <BEGIN> statement_block() <RETURN> <OPEN_BRACKET> (expression())? <CLOSE_BRACKET> <SEMICOLUMN><END>
+	type() identifier(false) <OPEN_BRACKET> parameter_list() #PARAM_LIST(>0) <CLOSE_BRACKET> <IS> decl_list() #DECL_LIST(>0) <BEGIN> statement_block() #FUNCTION_CODE(>0) <RETURN> <OPEN_BRACKET> (expression())? #RETURNS(>0) <CLOSE_BRACKET> <SEMICOLUMN><END>
 
 }
 
@@ -225,24 +225,29 @@ void nemp_parameter_list() #void :  {}
 	identifier(false) <COLUMN> type() #Parameter(2) (<COMMA> nemp_parameter_list())? 
 }
 
-void main() #Main_Code : {}
+void main() #MAIN() : {}
 {
-	<MAIN> <BEGIN> decl_list() statement_block() <END>
+	<MAIN> <BEGIN> decl_list() #MAIN_DECLS(>0) statement_block() #MAIN_CODE(>0) <END>
 }
 
-void statement_block() #void: {}
+void statement_block() #void:  {}
 {
-	( statement() statement_block() )?
+	(statement() statement_block() )?
 }
 
 void statement() #void : {Token t;}
 {
-	identifier(false) ( <IS_VALUE> expression() | <OPEN_BRACKET> arg_list() <CLOSE_BRACKET> ) <SEMICOLUMN> {} 
+	identifier(false) 
+	(//BEGIN OR
+		 <IS_VALUE> expression() #ASSIGN_OP(2) 
+		| <OPEN_BRACKET> arg_list() <CLOSE_BRACKET> #FUNC_CALL(2)
+	)//END OR
+        <SEMICOLUMN>  
 	| <BEGIN> statement_block() <END> #void
-	| <IF> condition() <BEGIN> statement_block() <END> #IF
-	| <ELSE> <BEGIN> statement_block() <END> #ELSE
-	| <WHILE> condition() <BEGIN> statement_block() <END> #WHILE 
-	| <DO_SKIP> <SEMICOLUMN> #void //TODO what is the purpose of skip? How relevant to semantics?
+	| <IF> condition() #IF_CONDITION(>0) <BEGIN> statement_block() #IF_CODE(>0) <END> #IF(2)
+	| <ELSE> <BEGIN> statement_block() #ELSE_CODE(>0) <END> #ELSE(1)
+	| <WHILE> condition() #WHILE_CONDITION(>0) <BEGIN> statement_block() #WHILE_CODE(>0) <END> #WHILE(2) 
+	| <DO_SKIP> <SEMICOLUMN> #SKIP //TODO what is the purpose of skip? How relevant to semantics?
 }
 
 void expression() #void: {}
@@ -338,35 +343,36 @@ void binary_arith_op() #void : {} //TODO string - string valid?
         | <MINUS_SIGN> #SUBTRACT_OP(2)
 }    
 
-void condition(): {}
+void condition() #void: {}
 {
-        (
-                (//begin OR 
-                        <TILDA> condition()
+        (//BEGIN OR
+                ( 
+                        <TILDA> condition() #NEGATION(>0)
                 )
                 |
                 LOOKAHEAD(3)(
                         <OPEN_BRACKET> /*--going to cause conflict with expression last choice if no lookahead--*/ condition() <CLOSE_BRACKET>
                 )
                 |
-                (
-                        expression() comp_op() expression()
-                ) //end OR
-        )
-        (
-                LOOKAHEAD(2)( <OR_SIGN> | <AND_SIGN> ) 
-                condition()
-        )? 
-}
+                (//re-write of comp_op 
+			expression()
+                        (//BEGIN OR
 
-void comp_op() #void : {} //TODO string less than string valid? 
-{
-	<EQUALS_SIGN> 
-	| <NEGATION_EQUALS> 
-	| <LESS_THAN>
-	| <EQUAL_LESS_THAN>
-	| <GREATER_THAN>
-	| <EQUAL_GREATER_THAN>
+				<EQUALS_SIGN> expression() #EQUAL(2)
+				| <NEGATION_EQUALS> expression() #NOT_EQUAL(2)
+				| <LESS_THAN> expression() #LESS_THAN(2)
+				| <EQUAL_LESS_THAN> expression() #EQ_LESS_THAN(2)
+				| <GREATER_THAN> expression() #GREATER_THAN(2)
+				| <EQUAL_GREATER_THAN> expression() #EQ_GREATER_THAN(2)
+			)//END OR
+                ) 
+        )//END OR
+        (
+                LOOKAHEAD(2)(//BEGIN OR
+		 	<OR_SIGN> condition() #OR(2) 
+			| <AND_SIGN> condition() #AND(2)
+		) 
+        )? 
 }
 
 void arg_list() #void : {}
@@ -374,7 +380,7 @@ void arg_list() #void : {}
 	(nemp_arg_list())?
 }
 
-void nemp_arg_list() #list_of_args : {}
+void nemp_arg_list() #ARG_LIST : {}
 {
 	 (identifier(false) (<COMMA> identifier(false))* ) 
 }
