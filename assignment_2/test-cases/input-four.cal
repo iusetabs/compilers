@@ -2,11 +2,14 @@
 integer test_fn(b: integer, c: integer) is
 	variable i: integer;
 begin
-	d := -h;
-	return ();
+	if (bigbadboys = i) 
+	begin
+	i := -b;
+	end
+	return (i);
 end
 
 main 
 begin
-	i := test_fn(i);
+	i := test_fn(i, b, c, d);
 end
