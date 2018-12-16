@@ -11,5 +11,6 @@ end
 
 main 
 begin
+	variable i: integer;
 	i := test_fn(i, b, c, d);
 end
