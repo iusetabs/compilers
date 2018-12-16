@@ -1,15 +1,7 @@
 constant f:integer := 123;
 variable e:boolean;
 
-vOid meme(test:void, me:integer, you:boolean) is
-  variable /*Oops stupid comment*/ k:integer;
-begin
-  my_id := /* Nest /*nested*/*/ your_id;
-  my_id2(test_arg); // hly moly ijesoirhw38rf
-  return(expression);
-eND
-
-void meme(test:void, me:integer, you:boolean) is
+void meme(test:integer, me:integer, you:boolean) is
   variable k:integer;
 begin
   my_id := your_id;
