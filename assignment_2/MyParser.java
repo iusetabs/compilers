@@ -31,7 +31,10 @@
                                         System.out.println("END SYMBOL_TABLE");
 
                                         System.out.println("...beginning semantic analysis");
-                                        System.out.println("Result to be determined");
+                                        SemanticAnalyser semanticAnalyser = new SemanticAnalyser();
+                                        root.jjtAccept(semanticAnalyser, STC);
+
+                                        System.out.println("Result in progress");
                                         System.out.println("...beginning IR code generation");
                                         System.out.println("Result to be determiend");
 
@@ -1703,32 +1706,6 @@
     finally { jj_save(1, xla); }
   }
 
-  static private boolean jj_3R_14() {
-    if (jj_scan_token(GREATER_THAN)) return true;
-    return false;
-  }
-
-  static private boolean jj_3R_6() {
-    if (jj_scan_token(AND_SIGN)) return true;
-    if (jj_3R_4()) return true;
-    return false;
-  }
-
-  static private boolean jj_3R_13() {
-    if (jj_scan_token(EQUAL_LESS_THAN)) return true;
-    return false;
-  }
-
-  static private boolean jj_3R_25() {
-    if (jj_scan_token(ID)) return true;
-    return false;
-  }
-
-  static private boolean jj_3R_12() {
-    if (jj_scan_token(LESS_THAN)) return true;
-    return false;
-  }
-
   static private boolean jj_3R_11() {
     if (jj_scan_token(NEGATION_EQUALS)) return true;
     return false;
@@ -1988,6 +1965,32 @@
 
   static private boolean jj_3R_15() {
     if (jj_scan_token(EQUAL_GREATER_THAN)) return true;
+    return false;
+  }
+
+  static private boolean jj_3R_14() {
+    if (jj_scan_token(GREATER_THAN)) return true;
+    return false;
+  }
+
+  static private boolean jj_3R_6() {
+    if (jj_scan_token(AND_SIGN)) return true;
+    if (jj_3R_4()) return true;
+    return false;
+  }
+
+  static private boolean jj_3R_13() {
+    if (jj_scan_token(EQUAL_LESS_THAN)) return true;
+    return false;
+  }
+
+  static private boolean jj_3R_25() {
+    if (jj_scan_token(ID)) return true;
+    return false;
+  }
+
+  static private boolean jj_3R_12() {
+    if (jj_scan_token(LESS_THAN)) return true;
     return false;
   }
 

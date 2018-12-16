@@ -5,6 +5,7 @@ public class SymbolTable extends Object{
 	private Hashtable<String, String> TypeTable;
 	private Hashtable<String, String> InfoTable; 
 	private Stack<String> scopeMonitor; //simply record scopes
+	private Stack<String> allScopes; //Stack that only gets added to. 
 	private String currentScope;
 
 	public SymbolTable(){
@@ -12,7 +13,9 @@ public class SymbolTable extends Object{
 		this.TypeTable = new Hashtable<>();
 		this.InfoTable = new Hashtable<>();
 		this.scopeMonitor = new Stack<String>();
+		this.allScopes = new Stack<String>();
 		this.currentScope = "global"; 
+		this.allScopes.push("global");
 	}
 	/*--- SCOPE METHODS  ---*/
 	public String getScope(){
@@ -44,6 +47,7 @@ public class SymbolTable extends Object{
 		this.currentScope = scope; 
 		LinkedList<String> ll = new LinkedList<>();
 		this.ScopeTable.put(scope, ll); 
+		this.allScopes.push(scope);
 	}
 	public void decreaseScope(){
 		//this.ScopeTable.remove(this.currentScope); 
@@ -58,8 +62,24 @@ public class SymbolTable extends Object{
 		int i = LL.indexOf(id);
 		System.out.println("DEBUG: value of i in moveLLElemToFront: " + i);
 		LL.addFirst(LL.get(i)); //copy element to start of LL
-		LL.remove(i); //remove the old copy
+		LL.remove(i+1); //remove the old copy. Index also gone up 1.
 		
+	}
+	public ArrayList<String> checkAllScopesFor(String id){
+		Enumeration iter = this.ScopeTable.keys(); 
+		ArrayList<String> keys_list = new ArrayList<>();
+		if (!this.ScopeTable.containsValue(id))
+			return keys_list;
+		String key = "";
+		LinkedList<String> ll = new LinkedList<>();
+		while (iter.hasMoreElements()) {
+			//return a list of ID_scope's
+			key = iter.nextElement().toString();
+			ll = this.ScopeTable.get(key); 
+			if(ll.contains(id))
+    				keys_list.add(key);
+		}
+		return keys_list;		 
 	}
 	/*-- END SCOPE METHODS --*/
 
@@ -161,7 +181,7 @@ public class SymbolTable extends Object{
 	}
 	public void enter(String id, String type, String info){
 		//scope table: key[scope] values[all ID's]
-		System.out.println("DEBUG: Attempting to add: ID " + id + ". Type: " + type + ". Info: " + info + " Scope: " + this.currentScope);
+//HELP		System.out.println("DEBUG: Attempting to add: ID " + id + ". Type: " + type + ". Info: " + info + " Scope: " + this.currentScope);
 		String id_scope = id + "*" + this.currentScope; 
 		String getType_val = this.getType(id_scope);
 		
@@ -179,7 +199,6 @@ public class SymbolTable extends Object{
 				//declare a new scope for a var change? Is it necessary?TODO  
 				if(!TypeTable_add(id_scope, type))
 					System.out.println("!ERROR: Cannot add type " + type + " to id " + id_scope + " in the type table");
-				this.moveLLElemToFront(id);
 			}
 			//We will move it to the front of the LL for scope for semantics
 			else{
@@ -206,6 +225,27 @@ public class SymbolTable extends Object{
 			if (key.split("\\*")[1].equals(scope))
 				this.InfoTable.remove(key); 
 		}
+	}
+        public String getMostRecentType(String id, String scope){
+		String id_type = "-1"; 
+		@SuppressWarnings("unchecked")
+		Stack<String> allScopesCopy = (Stack<String>)(this.allScopes.clone());
+		while(!allScopesCopy.pop().equals(scope)){}
+		allScopesCopy.push(scope); 
+		while(!allScopesCopy.empty()){
+			String s = allScopesCopy.pop();
+			System.out.println(s);
+			try{
+				if(this.getScopeLL(s).contains(id)){
+					id_type=this.getType(id+"*"+s);
+					break;
+				}
+			}
+			catch (NullPointerException e){
+				id_type = "-1"; //not declared in scope
+			}
+		}	
+		return id_type;
 	}
 	/*-- END CLASS FUNCTIONS --*/
 }

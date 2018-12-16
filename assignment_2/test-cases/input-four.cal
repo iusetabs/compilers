@@ -1,12 +1,17 @@
+variable i: integer;
+
+boolean test_b(b: integer, c: integer) is
+begin
+	i := -b;
+	c := i;
+	return (i);
+end
 
 integer test_fn(b: integer, c: integer) is
-	variable i: integer;
 begin
-	if (bigbadboys = i) 
-	begin
 	i := -b;
-	end
-	return (i);
+	c := i;
+	return (a);
 end
 
 main 
