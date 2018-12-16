@@ -16,32 +16,31 @@ public interface MyParserTreeConstants
   public int JJTMAIN_DECLS = 12;
   public int JJTMAIN_CODE = 13;
   public int JJTASSIGN_OP = 14;
-  public int JJTFUNC_CALL = 15;
-  public int JJTIF_CONDITION = 16;
-  public int JJTIF_CODE = 17;
-  public int JJTIF = 18;
-  public int JJTELSE_CODE = 19;
-  public int JJTELSE = 20;
-  public int JJTWHILE_CONDITION = 21;
-  public int JJTWHILE_CODE = 22;
-  public int JJTWHILE = 23;
-  public int JJTSKIP = 24;
-  public int JJTPLUS_OP = 25;
-  public int JJTSUBTRACT_OP = 26;
-  public int JJTNEGATION = 27;
-  public int JJTEQUAL = 28;
-  public int JJTNOT_EQUAL = 29;
-  public int JJTLESS_THAN = 30;
-  public int JJTEQ_LESS_THAN = 31;
-  public int JJTGREATER_THAN = 32;
-  public int JJTEQ_GREATER_THAN = 33;
-  public int JJTOR = 34;
-  public int JJTAND = 35;
-  public int JJTARG_LIST = 36;
-  public int JJTID = 37;
-  public int JJTINT = 38;
-  public int JJTIS_TRUE = 39;
-  public int JJTIS_FALSE = 40;
+  public int JJTIF_CONDITION = 15;
+  public int JJTIF_CODE = 16;
+  public int JJTIF = 17;
+  public int JJTELSE_CODE = 18;
+  public int JJTELSE = 19;
+  public int JJTWHILE_CONDITION = 20;
+  public int JJTWHILE_CODE = 21;
+  public int JJTWHILE = 22;
+  public int JJTSKIP = 23;
+  public int JJTPLUS_OP = 24;
+  public int JJTSUBTRACT_OP = 25;
+  public int JJTNEGATION = 26;
+  public int JJTEQUAL = 27;
+  public int JJTNOT_EQUAL = 28;
+  public int JJTLESS_THAN = 29;
+  public int JJTEQ_LESS_THAN = 30;
+  public int JJTGREATER_THAN = 31;
+  public int JJTEQ_GREATER_THAN = 32;
+  public int JJTOR = 33;
+  public int JJTAND = 34;
+  public int JJTARG_LIST = 35;
+  public int JJTID = 36;
+  public int JJTINT = 37;
+  public int JJTIS_TRUE = 38;
+  public int JJTIS_FALSE = 39;
 
 
   public String[] jjtNodeName = {
@@ -60,7 +59,6 @@ public interface MyParserTreeConstants
     "MAIN_DECLS",
     "MAIN_CODE",
     "ASSIGN_OP",
-    "FUNC_CALL",
     "IF_CONDITION",
     "IF_CODE",
     "IF",
@@ -88,4 +86,4 @@ public interface MyParserTreeConstants
     "IS_FALSE",
   };
 }
-/* JavaCC - OriginalChecksum=5ba2594529b72c05612fc5afbd41e6ff (do not edit this line) */
+/* JavaCC - OriginalChecksum=2919fb58c56e12f7fa59d07921061615 (do not edit this line) */

@@ -1,21 +1,11 @@
 variable i: integer;
 
-boolean test_b(b: integer, c: integer) is
-begin
-	i := -b;
-	c := i;
-	return (i);
-end
-
 integer test_fn(b: integer, c: integer) is
 begin
-	i := -b;
-	c := i;
-	return (a);
+	i := b + i;
+	return (i);
 end
 
 main 
 begin
-	variable i: integer;
-	i := test_fn(i, b, c, d);
 end

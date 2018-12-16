@@ -16,7 +16,6 @@ public interface MyParserVisitor
   public Object visit(ASTMAIN_DECLS node, Object data);
   public Object visit(ASTMAIN_CODE node, Object data);
   public Object visit(ASTASSIGN_OP node, Object data);
-  public Object visit(ASTFUNC_CALL node, Object data);
   public Object visit(ASTIF_CONDITION node, Object data);
   public Object visit(ASTIF_CODE node, Object data);
   public Object visit(ASTIF node, Object data);
@@ -43,4 +42,4 @@ public interface MyParserVisitor
   public Object visit(ASTIS_TRUE node, Object data);
   public Object visit(ASTIS_FALSE node, Object data);
 }
-/* JavaCC - OriginalChecksum=1a1ef4aa63dc81bb16e95b6f9180afb1 (do not edit this line) */
+/* JavaCC - OriginalChecksum=ceb7ebc99587311251b242ac29b27fca (do not edit this line) */

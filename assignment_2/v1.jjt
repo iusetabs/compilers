@@ -290,7 +290,7 @@ void statement() #void : {Token t;}
 	identifier(false) 
 	(//BEGIN OR
 		 <IS_VALUE> expression() #ASSIGN_OP(2) 
-		| <OPEN_BRACKET> arg_list() <CLOSE_BRACKET> #FUNC_CALL(2)
+		| <OPEN_BRACKET> arg_list() <CLOSE_BRACKET> 
 	)//END OR
         <SEMICOLUMN>  
 	| <BEGIN> statement_block() <END> #void
