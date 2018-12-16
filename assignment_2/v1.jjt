@@ -288,9 +288,33 @@ void statement() #void : {Token t;}
 	)//END OR
         <SEMICOLUMN>  
 	| <BEGIN> statement_block() <END> #void
-	| <IF> condition() #IF_CONDITION(>0) <BEGIN> statement_block() #IF_CODE(>0) <END> #IF(2)
-	| <ELSE> <BEGIN> statement_block() #ELSE_CODE(>0) <END> #ELSE(1)
-	| <WHILE> condition() #WHILE_CONDITION(>0) <BEGIN> statement_block() #WHILE_CODE(>0) <END> #WHILE(2) 
+	| <IF> condition() #IF_CONDITION(>0) <BEGIN> 
+	{
+		STC.increaseScope("if_statement");
+	}
+	statement_block() #IF_CODE(>0) 
+	{
+		STC.decreaseScope();
+	}
+	<END> #IF(2)
+	| <ELSE> <BEGIN> statement_block()
+	{
+		STC.increaseScope("else_statement");
+	}
+	 #ELSE_CODE(>0) 
+	{
+		STC.decreaseScope();
+	}
+	<END> #ELSE(1)
+	| <WHILE> condition() #WHILE_CONDITION(>0) <BEGIN> 
+	{
+		STC.increaseScope("else_statement");
+	}
+	statement_block() #WHILE_CODE(>0)
+	{
+		STC.decreaseScope();
+	}
+	<END> #WHILE(2) 
 	| <DO_SKIP> <SEMICOLUMN> #SKIP //TODO what is the purpose of skip? How relevant to semantics?
 }
 
