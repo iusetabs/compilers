@@ -32,6 +32,9 @@ PARSER_BEGIN(MyParser)
 	public class MyParser{
 
 		public static String scope = "global"; 
+		public static int ifID = 0;
+		public static int elseID = 0;
+		public static int whileID = 0;
 		public static SymbolTable STC = new SymbolTable(); 
 
 		public static void main (String [] args) throws ParseException, FileNotFoundException { 
@@ -290,7 +293,8 @@ void statement() #void : {Token t;}
 	| <BEGIN> statement_block() <END> #void
 	| <IF> condition() #IF_CONDITION(>0) <BEGIN> 
 	{
-		STC.increaseScope("if_statement");
+		STC.increaseScope("if_statement*" + Integer.toString(ifID));
+		ifID++; 
 	}
 	statement_block() #IF_CODE(>0) 
 	{
@@ -299,7 +303,8 @@ void statement() #void : {Token t;}
 	<END> #IF(2)
 	| <ELSE> <BEGIN> statement_block()
 	{
-		STC.increaseScope("else_statement");
+		STC.increaseScope("else_statement*"+Integer.toString(ifID-1)+"*"+elseID);
+		elseID++;
 	}
 	 #ELSE_CODE(>0) 
 	{
@@ -308,7 +313,8 @@ void statement() #void : {Token t;}
 	<END> #ELSE(1)
 	| <WHILE> condition() #WHILE_CONDITION(>0) <BEGIN> 
 	{
-		STC.increaseScope("else_statement");
+		STC.increaseScope("while_statement*" + Integer.toString(whileID));
+		whileID++;
 	}
 	statement_block() #WHILE_CODE(>0)
 	{
