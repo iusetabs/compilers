@@ -82,6 +82,17 @@ public class SymbolTable extends Object{
 		}
 		return keys_list;		 
 	}
+
+	public boolean checkScopeTableForDups(String prev_scope, String id){
+		@SuppressWarnings("unchecked")
+		LinkedList<String> ll = (LinkedList<String>) this.getScopeLL(prev_scope).clone();
+		if (!ll.contains(id))	
+			return false; 
+		ll.removeFirstOccurrence(id);
+		if (!ll.contains(id))
+			return false;
+		return true;	
+	}
 	/*-- END SCOPE METHODS --*/
 
 	/*-- TYPE METHODS --*/
@@ -114,7 +125,7 @@ public class SymbolTable extends Object{
 		return true;
 	}
 	public String getInfo(String id_scope){
-		if (this.InfoTable.containsKey(id_scope)){
+		if (!this.InfoTable.containsKey(id_scope)){
 			return ("-1"); //doesNotContain
 		}
 		return this.InfoTable.get(id_scope); 	
@@ -238,14 +249,34 @@ public class SymbolTable extends Object{
 			try{
 				if(this.getScopeLL(s).contains(id)){
 					id_type=this.getType(id+"*"+s);
-					break;
+					return id_type;	
 				}
 			}
 			catch (NullPointerException e){
-				id_type = "-1"; //not declared in scope
+				return id_type; //not declared in scope
 			}
 		}	
 		return id_type;
+	}
+        public String getMostRecentDesc(String id, String scope){
+		String id_info = "-1"; 
+		@SuppressWarnings("unchecked")
+		Stack<String> allScopesCopy = (Stack<String>)(this.allScopes.clone());
+		while(!allScopesCopy.pop().equals(scope)){}
+		allScopesCopy.push(scope); 
+		while(!allScopesCopy.empty()){
+			String s = allScopesCopy.pop();
+			try{
+				if(this.getScopeLL(s).contains(id)){
+					id_info=this.getInfo(id+"*"+s);
+					return id_info;	
+				}
+			}
+			catch (NullPointerException e){
+				return id_info; //not declared in scope
+			}
+		}	
+		return id_info;
 	}
 	/*-- END CLASS FUNCTIONS --*/
 }

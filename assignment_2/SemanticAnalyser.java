@@ -44,7 +44,6 @@ public class SemanticAnalyser implements MyParserVisitor{
     //TODO test.output(true, false, false);
     this.init_STC(data);
     int noChildren = node.jjtGetNumChildren();
-    System.out.println(debugTab + "DEBUG: Node ASTProg_Start: " + node);
     System.out.println(debugTab + "DEBUG: PROG Children: " + Integer.toString(noChildren)); 
     for(int i = 0; i < noChildren; i++){
        System.out.println(debugTab + "DEBUG: get child " + Integer.toString(i) + "."); 
@@ -56,17 +55,34 @@ public class SemanticAnalyser implements MyParserVisitor{
 
   public void isIDInScope(Node thisNode, String scope, String desc){ //SEMANTIC CHECK 5 
 	String id = this.visit((ASTID)(thisNode), null).toString();
-	System.out.println(debugTab + "DEBUG: ID = " + id);
+	System.out.println(debugTab + "DEBUG: ID = " + id + ". SCOPE = " + scope + ".");
     	if(this.STC.getMostRecentType(id, scope).equals("-1"))
 		System.out.println("ERROR: ID " + id + " in scope " + scope + " used in a " + desc  + " has not been declared within reachable scope.\nSOLUTION: Declare " + id + " before calling it.");
   }
 
+  public void isIDDupdInScope(String id){ //SEMANTIC CHECK 10
+     System.out.println("entered");
+     String prev_scope;
+     if(!this.currentScope.equals("global"))
+	    prev_scope = this.scopeTracker.pop().toString();
+     else
+	    prev_scope = "global";
+     String temp_type = this.STC.getType(id+"*"+prev_scope);
+     boolean isDup = this.STC.checkScopeTableForDups(prev_scope, id); 
+     if(isDup)
+        System.out.println("ERROR: ID " + id + " already declared in this scope as type " + temp_type + ".\nSOLUTION: Change the variable name.");	
+     if(!this.currentScope.equals("global"))
+        this.scopeTracker.push(prev_scope);
+  }
+
   public Object visit(ASTvariable_decl node, Object data){
     System.out.println(debugTab + "DEBUG: Node ASTvariable_decl: " + node);
+    this.isIDDupdInScope(this.visit((ASTID)(node.jjtGetChild(0)), data).toString());
     return data;
    }
   public Object visit(ASTconstant_decl node, Object data){
     System.out.println(debugTab + "DEBUG: Node ASTconstant_decl: " + node);
+    this.isIDDupdInScope(this.visit((ASTID)(node.jjtGetChild(0)), data).toString());
     return data;
    }
   public Object visit(ASTVAL_TYPE node, Object data){
@@ -95,8 +111,10 @@ public class SemanticAnalyser implements MyParserVisitor{
           if(function_type.equals("void"))
 	     isNotVoid = false; 
        }
-       else if(thisNode.toString().equals("ID"))
+       else if(thisNode.toString().equals("ID")){
 	  function_name = this.visit((ASTID)(thisNode), data).toString();
+	  this.isIDDupdInScope(function_name);
+	}
        else if(thisNode.toString().equals("RETURNS")){	
 		noReturnValues = false; 
 		return_type = this.visit((ASTRETURNS)(thisNode), data).toString();
@@ -187,15 +205,52 @@ public class SemanticAnalyser implements MyParserVisitor{
     return data;
    }
 
+  public void checkLHS_RHS_ofAssign(String LHS_type, Node RHS){
+	//RHS is equal to a PLUS_OP or a SUB_OP
+	System.out.println("HI:" + RHS.toString());
+	System.out.println(Integer.toString(RHS.jjtGetNumChildren()));
+	for (int i = 0; i < RHS.jjtGetNumChildren(); i++){
+		System.out.println("TEST" + RHS.jjtGetChild(i).toString());
+		Node s = RHS.jjtGetChild(i);
+		if(s.toString().equals("PLUS_OP") || s.toString().equals("SUBTRACT_OP"))
+			this.checkLHS_RHS_ofAssign(LHS_type, s); 
+		else if (s.toString().equals("ID")){
+			String id = this.visit((ASTID)(s), null).toString();
+			String id_type = this.STC.getMostRecentType(id, this.currentScope);
+			if(!id_type.equals("-1") && !id_type.equals(LHS_type))
+				System.out.println("ERROR: ID " + id + " of type " + id_type + " on RHS of ASSIGN does not match LHS type " + LHS_type); //SEMANTIC CHECK 11
+		}
+		else if(s.toString().equals("INT") && !(LHS_type.equals("integer"))){
+			System.out.println("ERROR: integer found on RHS of ASSIGN does not match LHS type " + LHS_type); //SEMANTIC CHECK 12
+		}
+		else if((s.toString().equals("IS_FALSE") || s.toString().equals("IS_TRUE")) && !(LHS_type.equals("boolean")))
+			System.out.println("ERROR: boolean found on RHS of ASSIGN does not match LHS type " + LHS_type); //SEMANTIC CHECK 13
+
+	}
+  }
+
   public Object visit(ASTASSIGN_OP node, Object data){
     System.out.println(debugTab + "DEBUG: Node ASTASSIGN_OP: " + node);
     String id1 = "";
+    System.out.println(this.visit((ASTID)(node.jjtGetChild(0)), null).toString());
+    String LHS_ID = this.visit((ASTID)(node.jjtGetChild(0)), null).toString();
+    if(this.STC.getMostRecentDesc(LHS_ID, this.currentScope).equals("const")){
+       System.out.println("ERROR: A constant cannot be set to a new value.\nSOLUTION: Re-define the identifier"); //SEMANTIC CHECK 10
+    }
     for(int i = 0; i < node.jjtGetNumChildren(); i++){
 	Node n = node.jjtGetChild(i);
+	if(!n.toString().equals("ID")){
+		n.jjtAccept(this,data);
+		System.out.println("No: " + Integer.toString(n.jjtGetNumChildren()));
+		if(n.toString().equals("PLUS_OP") || n.toString().equals("SUB_OP")){
+			System.out.println("yep!");
+			this.checkLHS_RHS_ofAssign(this.STC.getType(LHS_ID+"*"+this.currentScope), n);
+		}
+	}
 	if(node.jjtGetNumChildren() == 2){
-		if (i == 0)
+		if (i == 0 && n.toString().equals("ID"))
 			id1 = this.visit((ASTID)(n), null).toString();
-		if(i == 1 & this.visit((ASTID)(n), null).toString().equals(id1)){
+		if(i == 1 && n.toString().equals("ID") && this.visit((ASTID)(n), null).toString().equals(id1)){
 			System.out.println("WARNING: Assign_Op assigning same value to itself. No change in LHS. " + id1 + " := " + id1 + ";\nSOLUTION: Don't do this!"); //SEMANTIC CHECK 6
 			return data;
 		}
