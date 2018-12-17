@@ -18,29 +18,27 @@ public interface MyParserTreeConstants
   public int JJTASSIGN_OP = 14;
   public int JJTIF_CONDITION = 15;
   public int JJTIF_CODE = 16;
-  public int JJTIF = 17;
+  public int JJTELSE = 17;
   public int JJTELSE_CODE = 18;
-  public int JJTELSE = 19;
-  public int JJTWHILE_CONDITION = 20;
-  public int JJTWHILE_CODE = 21;
-  public int JJTWHILE = 22;
-  public int JJTSKIP = 23;
-  public int JJTPLUS_OP = 24;
-  public int JJTSUBTRACT_OP = 25;
-  public int JJTNEGATION = 26;
-  public int JJTEQUAL = 27;
-  public int JJTNOT_EQUAL = 28;
-  public int JJTLESS_THAN = 29;
-  public int JJTEQ_LESS_THAN = 30;
-  public int JJTGREATER_THAN = 31;
-  public int JJTEQ_GREATER_THAN = 32;
-  public int JJTOR = 33;
-  public int JJTAND = 34;
-  public int JJTARG_LIST = 35;
-  public int JJTID = 36;
-  public int JJTINT = 37;
-  public int JJTIS_TRUE = 38;
-  public int JJTIS_FALSE = 39;
+  public int JJTWHILE_CONDITION = 19;
+  public int JJTWHILE_CODE = 20;
+  public int JJTSKIP = 21;
+  public int JJTPLUS_OP = 22;
+  public int JJTSUBTRACT_OP = 23;
+  public int JJTNEGATION = 24;
+  public int JJTEQUAL = 25;
+  public int JJTNOT_EQUAL = 26;
+  public int JJTLESS_THAN = 27;
+  public int JJTEQ_LESS_THAN = 28;
+  public int JJTGREATER_THAN = 29;
+  public int JJTEQ_GREATER_THAN = 30;
+  public int JJTOR = 31;
+  public int JJTAND = 32;
+  public int JJTARG_LIST = 33;
+  public int JJTID = 34;
+  public int JJTINT = 35;
+  public int JJTIS_TRUE = 36;
+  public int JJTIS_FALSE = 37;
 
 
   public String[] jjtNodeName = {
@@ -61,12 +59,10 @@ public interface MyParserTreeConstants
     "ASSIGN_OP",
     "IF_CONDITION",
     "IF_CODE",
-    "IF",
-    "ELSE_CODE",
     "ELSE",
+    "ELSE_CODE",
     "WHILE_CONDITION",
     "WHILE_CODE",
-    "WHILE",
     "SKIP",
     "PLUS_OP",
     "SUBTRACT_OP",
@@ -86,4 +82,4 @@ public interface MyParserTreeConstants
     "IS_FALSE",
   };
 }
-/* JavaCC - OriginalChecksum=2919fb58c56e12f7fa59d07921061615 (do not edit this line) */
+/* JavaCC - OriginalChecksum=b923f1f626fc84baab6501a7614c46d6 (do not edit this line) */

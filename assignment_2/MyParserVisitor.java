@@ -18,12 +18,10 @@ public interface MyParserVisitor
   public Object visit(ASTASSIGN_OP node, Object data);
   public Object visit(ASTIF_CONDITION node, Object data);
   public Object visit(ASTIF_CODE node, Object data);
-  public Object visit(ASTIF node, Object data);
-  public Object visit(ASTELSE_CODE node, Object data);
   public Object visit(ASTELSE node, Object data);
+  public Object visit(ASTELSE_CODE node, Object data);
   public Object visit(ASTWHILE_CONDITION node, Object data);
   public Object visit(ASTWHILE_CODE node, Object data);
-  public Object visit(ASTWHILE node, Object data);
   public Object visit(ASTSKIP node, Object data);
   public Object visit(ASTPLUS_OP node, Object data);
   public Object visit(ASTSUBTRACT_OP node, Object data);
@@ -42,4 +40,4 @@ public interface MyParserVisitor
   public Object visit(ASTIS_TRUE node, Object data);
   public Object visit(ASTIS_FALSE node, Object data);
 }
-/* JavaCC - OriginalChecksum=ceb7ebc99587311251b242ac29b27fca (do not edit this line) */
+/* JavaCC - OriginalChecksum=e160cbeb599fd56fe226fb2fe4ce9fb8 (do not edit this line) */

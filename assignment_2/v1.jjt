@@ -60,7 +60,8 @@ PARSER_BEGIN(MyParser)
 					SemanticAnalyser semanticAnalyser = new SemanticAnalyser();
      				        root.jjtAccept(semanticAnalyser, STC);
 
-					System.out.println("Result in progress");
+					System.out.println("END SEMANTIC_ANALYSIS");
+
 					System.out.println("...beginning IR code generation");
 					System.out.println("Result to be determiend");
 					
@@ -303,17 +304,16 @@ void statement() #void : {Token t;}
 	{
 		STC.decreaseScope();
 	}
-	<END> #IF(2)
-	| <ELSE> <BEGIN> statement_block()
+	<END> 
+	| <ELSE> #ELSE <BEGIN> statement_block() #ELSE_CODE(>0) 
 	{
 		STC.increaseScope("else_statement*"+Integer.toString(ifID-1)+"*"+elseID);
 		elseID++;
 	}
-	 #ELSE_CODE(>0) 
 	{
 		STC.decreaseScope();
 	}
-	<END> #ELSE(1)
+	<END> 
 	| <WHILE> condition() #WHILE_CONDITION(>0) <BEGIN> 
 	{
 		STC.increaseScope("while_statement*" + Integer.toString(whileID));
@@ -323,7 +323,7 @@ void statement() #void : {Token t;}
 	{
 		STC.decreaseScope();
 	}
-	<END> #WHILE(2) 
+	<END> 
 	| <DO_SKIP> <SEMICOLUMN> #SKIP //TODO what is the purpose of skip? How relevant to semantics?
 }
 

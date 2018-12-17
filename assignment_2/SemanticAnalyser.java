@@ -56,6 +56,7 @@ public class SemanticAnalyser implements MyParserVisitor{
 
   public void isIDInScope(Node thisNode, String scope, String desc){ //SEMANTIC CHECK 5 
 	String id = this.visit((ASTID)(thisNode), null).toString();
+	System.out.println(debugTab + "DEBUG: ID = " + id);
     	if(this.STC.getMostRecentType(id, scope).equals("-1"))
 		System.out.println("ERROR: ID " + id + " in scope " + scope + " used in a " + desc  + " has not been declared within reachable scope.\nSOLUTION: Declare " + id + " before calling it.");
   }
@@ -136,11 +137,14 @@ public class SemanticAnalyser implements MyParserVisitor{
     //checkAllIDs used
     System.out.println(debugTab + "DEBUG: entering code");
     int noChildren = node.jjtGetNumChildren();
+    checkForEmpties monitor = new checkForEmpties();
     for(int i = 0; i < noChildren; i++){
        System.out.println(debugTab + "DEBUG: get child " + Integer.toString(i) + "."); 
-       node.jjtGetChild(i).jjtAccept(this, data); 
-    }
-    
+	monitor.give(node.jjtGetChild(i));
+        node.jjtGetChild(i).jjtAccept(this, data); 
+	if(i + 1 == noChildren)
+		monitor.give(node.jjtGetChild(i));
+       }
     System.out.println(debugTab + "DEBUG: Node ASTFUNCTION_CODE: " + node);
     return data;
    }
@@ -148,7 +152,6 @@ public class SemanticAnalyser implements MyParserVisitor{
     System.out.println(debugTab + "DEBUG: Node ASTRETURNS: " + node);
     String return_id = this.visit((ASTID)(node.jjtGetChild(0)), data).toString();
     String return_type = this.STC.getMostRecentType(return_id, this.currentScope);
-    System.out.println("TEST: return_type = " + return_type);
     this.decreaseScope();
     return return_type+"*"+return_id;
    }
@@ -172,13 +175,32 @@ public class SemanticAnalyser implements MyParserVisitor{
    }
   public Object visit(ASTMAIN_CODE node, Object data){
     System.out.println(debugTab + "DEBUG: Node ASTMAIN_CODE: " + node);
+    checkForEmpties monitor = new checkForEmpties(); 
+    System.out.println(node.jjtGetNumChildren());
+    for(int i = 0; i < node.jjtGetNumChildren(); i++){
+       System.out.println(debugTab + "DEBUG: get child " + Integer.toString(i) + "."); 
+	monitor.give(node.jjtGetChild(i));
+	node.jjtGetChild(i).jjtAccept(this, data);
+	if(i + 1 == node.jjtGetNumChildren())
+		monitor.give(node.jjtGetChild(i));
+    }
     return data;
    }
 
   public Object visit(ASTASSIGN_OP node, Object data){
     System.out.println(debugTab + "DEBUG: Node ASTASSIGN_OP: " + node);
+    String id1 = "";
     for(int i = 0; i < node.jjtGetNumChildren(); i++){
 	Node n = node.jjtGetChild(i);
+	if(node.jjtGetNumChildren() == 2){
+		if (i == 0)
+			id1 = this.visit((ASTID)(n), null).toString();
+		if(i == 1 & this.visit((ASTID)(n), null).toString().equals(id1)){
+			System.out.println("WARNING: Assign_Op assigning same value to itself. No change in LHS. " + id1 + " := " + id1 + ";\nSOLUTION: Don't do this!"); //SEMANTIC CHECK 6
+			return data;
+		}
+			
+	}
 	if(n.toString().equals("ID"))
 		isIDInScope(n, this.currentScope, "assignment");
     }
@@ -189,43 +211,76 @@ public class SemanticAnalyser implements MyParserVisitor{
     System.out.println(debugTab + "DEBUG: Node ASTIF_CONDITION: " + node);
     for(int i = 0; i < node.jjtGetNumChildren(); i++){
 	Node n = node.jjtGetChild(i);
-	if(!n.toString().equals("ID"))
+	if(n.toString().equals("ID"))
 		isIDInScope(n, this.currentScope, "assignment");
+	else
+		n.jjtAccept(this,data);
+		
     }
-    return data;
+    return node.value;
    }
   public Object visit(ASTIF_CODE node, Object data){
     System.out.println(debugTab + "DEBUG: Node ASTIF_CODE: " + node);
-    return data;
-   }
-  public Object visit(ASTIF node, Object data){
-    System.out.println(debugTab + "DEBUG: Node ASTIF: " + node);
-    return data;
-   }
+    checkForEmpties monitor = new checkForEmpties();
+    for(int i = 0; i < node.jjtGetNumChildren(); i++){
+	Node n = node.jjtGetChild(i);
+	if(n.toString().equals("ID"))
+		isIDInScope(n, this.currentScope, "assignment");
+	else{
+		monitor.give(node.jjtGetChild(i));
+		n.jjtAccept(this,data);
+		if(i + 1 == node.jjtGetNumChildren())
+			monitor.give(node.jjtGetChild(i));
+	}
+     }
+    return node.value;
+  }
   public Object visit(ASTELSE_CODE node, Object data){
     System.out.println(debugTab + "DEBUG: Node ASTELSE_CODE: " + node);
-    return data;
-   }
+    checkForEmpties monitor = new checkForEmpties();
+    for(int i = 0; i < node.jjtGetNumChildren(); i++){
+	Node n = node.jjtGetChild(i);
+	if(n.toString().equals("ID"))
+		isIDInScope(n, this.currentScope, "assignment");
+	else{
+		monitor.give(node.jjtGetChild(i));
+		n.jjtAccept(this,data); 
+		if(i + 1 == node.jjtGetNumChildren())
+			monitor.give(node.jjtGetChild(i));
+	}
+    }
+    return node.value;
+  }
   public Object visit(ASTELSE node, Object data){
     System.out.println(debugTab + "DEBUG: Node ASTELSE: " + node);
-    return data;
+    return node.value;
    }
   public Object visit(ASTWHILE_CONDITION node, Object data){
     System.out.println(debugTab + "DEBUG: Node ASTWHILE_CONDITION: " + node);
     for(int i = 0; i < node.jjtGetNumChildren(); i++){
 	Node n = node.jjtGetChild(i);
-	if(!n.toString().equals("ID"))
+	if(n.toString().equals("ID"))
 		isIDInScope(n, this.currentScope, "assignment");
+	else
+		n.jjtAccept(this,data);
     }
-    return data;
+    return node.value;
    }
   public Object visit(ASTWHILE_CODE node, Object data){
     System.out.println(debugTab + "DEBUG: Node ASTWHILE_CODE: " + node);
-    return data;
-   }
-  public Object visit(ASTWHILE node, Object data){
-    System.out.println(debugTab + "DEBUG: Node ASTWHILE: " + node);
-    return data;
+    checkForEmpties monitor = new checkForEmpties();
+    for(int i = 0; i < node.jjtGetNumChildren(); i++){
+	Node n = node.jjtGetChild(i);
+	if(n.toString().equals("ID"))
+		isIDInScope(n, this.currentScope, "assignment");
+	else{
+		monitor.give(node.jjtGetChild(i));
+		n.jjtAccept(this,data);
+		if(i + 1 == node.jjtGetNumChildren())
+			monitor.give(node.jjtGetChild(i)); 
+	}
+      }
+    return node.value;
    }
   public Object visit(ASTSKIP node, Object data){
   System.out.println(debugTab + "DEBUG: Node ASTSKIP: " + node);
@@ -235,8 +290,10 @@ public class SemanticAnalyser implements MyParserVisitor{
     System.out.println(debugTab + "DEBUG: Node ASTPLUS_OP: " + node);
     for(int i = 0; i < node.jjtGetNumChildren(); i++){
 	Node n = node.jjtGetChild(i);
-	if(!n.toString().equals("ID"))
+	if(n.toString().equals("ID"))
 		isIDInScope(n, this.currentScope, "assignment");
+	else
+		n.jjtAccept(this,data);
     }
     return data;
    }
@@ -244,8 +301,10 @@ public class SemanticAnalyser implements MyParserVisitor{
     System.out.println(debugTab + "DEBUG: Node ASTSUBTRACT_OP: " + node);
     for(int i = 0; i < node.jjtGetNumChildren(); i++){
 	Node n = node.jjtGetChild(i);
-	if(!n.toString().equals("ID"))
+	if(n.toString().equals("ID"))
 		isIDInScope(n, this.currentScope, "assignment");
+	else
+		n.jjtAccept(this,data);
     }
     return data;
    }
@@ -307,5 +366,4 @@ public class SemanticAnalyser implements MyParserVisitor{
     System.out.println(debugTab + "DEBUG: Node ASTIS_FALSE: " + node);
     return data;
    }
-
 }

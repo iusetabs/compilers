@@ -64,7 +64,8 @@ PARSER_BEGIN(MyParser)
 					SemanticAnalyser semanticAnalyser = new SemanticAnalyser();
      				        root.jjtAccept(semanticAnalyser, STC);
 
-					System.out.println("Result in progress");
+					System.out.println("END SEMANTIC_ANALYSIS");
+
 					System.out.println("...beginning IR code generation");
 					System.out.println("Result to be determiend");
 					
@@ -752,87 +753,82 @@ void statement()       : {Token t;}
 /*@egen*/              
 	{
 		STC.decreaseScope();
-	}/*@bgen(jjtree) #IF( 2) */
-        {
-          ASTIF jjtn005 = new ASTIF(JJTIF);
-          boolean jjtc005 = true;
-          jjtree.openNodeScope(jjtn005);
-        }
-        try {
-/*@egen*/
-	<END>/*@bgen(jjtree)*/
-        } finally {
-          if (jjtc005) {
-            jjtree.closeNodeScope(jjtn005,  2);
+	}
+	<END> 
+	|/*@bgen(jjtree) ELSE */
+          {
+            ASTELSE jjtn005 = new ASTELSE(JJTELSE);
+            boolean jjtc005 = true;
+            jjtree.openNodeScope(jjtn005);
           }
-        }
-/*@egen*/       
-	| <ELSE> <BEGIN> statement_block()/*@bgen(jjtree) #ELSE_CODE(> 0) */
-        {
-          ASTELSE_CODE jjtn006 = new ASTELSE_CODE(JJTELSE_CODE);
-          boolean jjtc006 = true;
-          jjtree.openNodeScope(jjtn006);
-        }
-        try {
-/*@egen*//*@bgen(jjtree)*/
-        {
-          jjtree.closeNodeScope(jjtn006, jjtree.nodeArity() > 0);
-          jjtc006 = false;
-        }
-/*@egen*/
+          try {
+/*@egen*/ <ELSE>/*@bgen(jjtree)*/
+          } finally {
+            if (jjtc005) {
+              jjtree.closeNodeScope(jjtn005, true);
+            }
+          }
+/*@egen*/       <BEGIN>/*@bgen(jjtree) #ELSE_CODE(> 0) */
+                               {
+                                 ASTELSE_CODE jjtn006 = new ASTELSE_CODE(JJTELSE_CODE);
+                                 boolean jjtc006 = true;
+                                 jjtree.openNodeScope(jjtn006);
+                               }
+                               try {
+/*@egen*/ statement_block()/*@bgen(jjtree)*/
+                               } catch (Throwable jjte006) {
+                                 if (jjtc006) {
+                                   jjtree.clearNodeScope(jjtn006);
+                                   jjtc006 = false;
+                                 } else {
+                                   jjtree.popNode();
+                                 }
+                                 if (jjte006 instanceof RuntimeException) {
+                                   throw (RuntimeException)jjte006;
+                                 }
+                                 if (jjte006 instanceof ParseException) {
+                                   throw (ParseException)jjte006;
+                                 }
+                                 throw (Error)jjte006;
+                               } finally {
+                                 if (jjtc006) {
+                                   jjtree.closeNodeScope(jjtn006, jjtree.nodeArity() > 0);
+                                 }
+                               }
+/*@egen*/                
 	{
 		STC.increaseScope("else_statement*"+Integer.toString(ifID-1)+"*"+elseID);
 		elseID++;
-	}/*@bgen(jjtree)*/
-        } finally {
-          if (jjtc006) {
-            jjtree.closeNodeScope(jjtn006, jjtree.nodeArity() > 0);
-          }
-        }
-/*@egen*/
-	                
+	}
 	{
 		STC.decreaseScope();
-	}/*@bgen(jjtree) #ELSE( 1) */
-        {
-          ASTELSE jjtn007 = new ASTELSE(JJTELSE);
-          boolean jjtc007 = true;
-          jjtree.openNodeScope(jjtn007);
-        }
-        try {
-/*@egen*/
-	<END>/*@bgen(jjtree)*/
-        } finally {
-          if (jjtc007) {
-            jjtree.closeNodeScope(jjtn007,  1);
-          }
-        }
-/*@egen*/         
+	}
+	<END> 
 	| <WHILE>/*@bgen(jjtree) #WHILE_CONDITION(> 0) */
                   {
-                    ASTWHILE_CONDITION jjtn008 = new ASTWHILE_CONDITION(JJTWHILE_CONDITION);
-                    boolean jjtc008 = true;
-                    jjtree.openNodeScope(jjtn008);
+                    ASTWHILE_CONDITION jjtn007 = new ASTWHILE_CONDITION(JJTWHILE_CONDITION);
+                    boolean jjtc007 = true;
+                    jjtree.openNodeScope(jjtn007);
                   }
                   try {
 /*@egen*/ condition()/*@bgen(jjtree)*/
-                  } catch (Throwable jjte008) {
-                    if (jjtc008) {
-                      jjtree.clearNodeScope(jjtn008);
-                      jjtc008 = false;
+                  } catch (Throwable jjte007) {
+                    if (jjtc007) {
+                      jjtree.clearNodeScope(jjtn007);
+                      jjtc007 = false;
                     } else {
                       jjtree.popNode();
                     }
-                    if (jjte008 instanceof RuntimeException) {
-                      throw (RuntimeException)jjte008;
+                    if (jjte007 instanceof RuntimeException) {
+                      throw (RuntimeException)jjte007;
                     }
-                    if (jjte008 instanceof ParseException) {
-                      throw (ParseException)jjte008;
+                    if (jjte007 instanceof ParseException) {
+                      throw (ParseException)jjte007;
                     }
-                    throw (Error)jjte008;
+                    throw (Error)jjte007;
                   } finally {
-                    if (jjtc008) {
-                      jjtree.closeNodeScope(jjtn008, jjtree.nodeArity() > 0);
+                    if (jjtc007) {
+                      jjtree.closeNodeScope(jjtn007, jjtree.nodeArity() > 0);
                     }
                   }
 /*@egen*/                      <BEGIN> 
@@ -841,61 +837,48 @@ void statement()       : {Token t;}
 		whileID++;
 	}/*@bgen(jjtree) #WHILE_CODE(> 0) */
         {
-          ASTWHILE_CODE jjtn009 = new ASTWHILE_CODE(JJTWHILE_CODE);
-          boolean jjtc009 = true;
-          jjtree.openNodeScope(jjtn009);
+          ASTWHILE_CODE jjtn008 = new ASTWHILE_CODE(JJTWHILE_CODE);
+          boolean jjtc008 = true;
+          jjtree.openNodeScope(jjtn008);
         }
         try {
 /*@egen*/
 	statement_block()/*@bgen(jjtree)*/
-        } catch (Throwable jjte009) {
-          if (jjtc009) {
-            jjtree.clearNodeScope(jjtn009);
-            jjtc009 = false;
+        } catch (Throwable jjte008) {
+          if (jjtc008) {
+            jjtree.clearNodeScope(jjtn008);
+            jjtc008 = false;
           } else {
             jjtree.popNode();
           }
-          if (jjte009 instanceof RuntimeException) {
-            throw (RuntimeException)jjte009;
+          if (jjte008 instanceof RuntimeException) {
+            throw (RuntimeException)jjte008;
           }
-          if (jjte009 instanceof ParseException) {
-            throw (ParseException)jjte009;
+          if (jjte008 instanceof ParseException) {
+            throw (ParseException)jjte008;
           }
-          throw (Error)jjte009;
+          throw (Error)jjte008;
         } finally {
-          if (jjtc009) {
-            jjtree.closeNodeScope(jjtn009, jjtree.nodeArity() > 0);
+          if (jjtc008) {
+            jjtree.closeNodeScope(jjtn008, jjtree.nodeArity() > 0);
           }
         }
 /*@egen*/                
 	{
 		STC.decreaseScope();
-	}/*@bgen(jjtree) #WHILE( 2) */
-        {
-          ASTWHILE jjtn010 = new ASTWHILE(JJTWHILE);
-          boolean jjtc010 = true;
-          jjtree.openNodeScope(jjtn010);
-        }
-        try {
-/*@egen*/
-	<END>/*@bgen(jjtree)*/
-        } finally {
-          if (jjtc010) {
-            jjtree.closeNodeScope(jjtn010,  2);
-          }
-        }
-/*@egen*/           
+	}
+	<END> 
 	| <DO_SKIP>/*@bgen(jjtree) SKIP */
                     {
-                      ASTSKIP jjtn011 = new ASTSKIP(JJTSKIP);
-                      boolean jjtc011 = true;
-                      jjtree.openNodeScope(jjtn011);
+                      ASTSKIP jjtn009 = new ASTSKIP(JJTSKIP);
+                      boolean jjtc009 = true;
+                      jjtree.openNodeScope(jjtn009);
                     }
                     try {
 /*@egen*/ <SEMICOLUMN>/*@bgen(jjtree)*/
                     } finally {
-                      if (jjtc011) {
-                        jjtree.closeNodeScope(jjtn011, true);
+                      if (jjtc009) {
+                        jjtree.closeNodeScope(jjtn009, true);
                       }
                     }
 /*@egen*/       //TODO what is the purpose of skip? How relevant to semantics?

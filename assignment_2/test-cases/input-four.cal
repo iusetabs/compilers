@@ -1,11 +1,26 @@
 variable i: integer;
 
-integer test_fn(b: integer, c: integer) is
+integer test_fn(b: integer) is
+variable test: integer;
 begin
-	i := b + i;
+	if(x = y & b = t)
+	begin
+	end
+	else
+	begin
+	end
 	return (i);
 end
 
 main 
 begin
+	while(tits = x)
+	begin
+	if(x = y & b = t)
+	begin
+	end
+	else
+	begin
+	end
+	end
 end

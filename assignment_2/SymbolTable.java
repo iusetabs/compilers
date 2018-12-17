@@ -234,7 +234,6 @@ public class SymbolTable extends Object{
 		allScopesCopy.push(scope); 
 		while(!allScopesCopy.empty()){
 			String s = allScopesCopy.pop();
-			System.out.println(s);
 			try{
 				if(this.getScopeLL(s).contains(id)){
 					id_type=this.getType(id+"*"+s);
