@@ -34,19 +34,19 @@ public class checkForEmpties{
        if(this.ifHit){
 	   this.ifHit = false; 
 	   if(!this.currentNode.toString().equals("IF_CODE")){
-		System.out.println("ERROR: If found without any body code.\nSOLUTION: Remove."); //SEMANTIC CHECK 7
+		System.out.println("ERROR: If found without any body code.\nSOLUTION: Remove.\n"); //SEMANTIC CHECK 7
 	   }
        }
        else if(this.whileHit){ 
 	   this.whileHit = false;
 	   if(!this.currentNode.toString().equals("WHILE_CODE")){
-		System.out.println("ERROR: WHILE found without any body code.\nSOLUTION: Remove."); //SEMANTIC CHECK 8
+		System.out.println("ERROR: WHILE found without any body code.\nSOLUTION: Remove.\n"); //SEMANTIC CHECK 8
 	   }
        }
        else if(this.elseHit){
 	    this.elseHit = false;
 	    if(!this.currentNode.toString().equals("ELSE_CODE")){
-		System.out.println("ERROR: ELSE found without any body code.\nSOLUTION: Remove."); //SEMANTIC CHECK 9
+		System.out.println("ERROR: ELSE found without any body code.\nSOLUTION: Remove.\n"); //SEMANTIC CHECK 9
 	   }
 	}
 	return false;

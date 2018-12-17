@@ -33,7 +33,6 @@ public class SymbolTable extends Object{
 				ll = new LinkedList<>();
 			ll.addFirst(value);
 			this.ScopeTable.put(scope, ll);
-//HELP			System.out.print("DEBUG: Added " + scope + " and LL "); 
 			return true; 
 		}
 		catch (Exception e){
@@ -50,8 +49,6 @@ public class SymbolTable extends Object{
 		this.allScopes.push(scope);
 	}
 	public void decreaseScope(){
-		//this.ScopeTable.remove(this.currentScope); 
-		//this.removeAllItemsFromScope(this.currentScope); don't do this yet.
 		this.currentScope = scopeMonitor.pop(); 
 		this.allScopes.push(this.currentScope); //need to track which scopes we are coming in and out of. 
 	}
@@ -61,7 +58,6 @@ public class SymbolTable extends Object{
 	private void moveLLElemToFront(String id){
 		LinkedList<String> LL = this.getScopeLL(this.currentScope);
 		int i = LL.indexOf(id);
-		System.out.println("DEBUG: value of i in moveLLElemToFront: " + i);
 		LL.addFirst(LL.get(i)); //copy element to start of LL
 		LL.remove(i+1); //remove the old copy. Index also gone up 1.
 		
@@ -98,14 +94,12 @@ public class SymbolTable extends Object{
 	/*-- TYPE METHODS --*/
 	public boolean TypeTable_add(String id_scope, String type){
 		if (this.TypeTable.containsKey(id_scope)){
-//HELP			System.out.println("DEBUG: Typetable contains " + id_scope + " already.");
 			return false; //value is contained within the table
 		}
 		this.TypeTable.put(id_scope, type);
 		return true;
 	}
 	public String getType(String id_scope){
-//HELP		System.out.println("DEBUG: " + id_scope);
 		if (!this.TypeTable.containsKey(id_scope)){
 			return ("-1"); //doesNotContain
 		}
@@ -192,8 +186,6 @@ public class SymbolTable extends Object{
 		}
 	}
 	public void enter(String id, String type, String info){
-		//scope table: key[scope] values[all ID's]
-//HELP		System.out.println("DEBUG: Attempting to add: ID " + id + ". Type: " + type + ". Info: " + info + " Scope: " + this.currentScope);
 		String id_scope = id + "*" + this.currentScope; 
 		String getType_val = this.getType(id_scope);
 		
@@ -208,7 +200,6 @@ public class SymbolTable extends Object{
 			}
 			else if(!getType_val.equals(type)){//the type has been changed
 				System.out.println("!WARNING: Identifier " + id + " has been changed from type " + getType_val + " to type " + type + ".");
-				//declare a new scope for a var change? Is it necessary?TODO  
 				if(!TypeTable_add(id_scope, type))
 					System.out.println("!ERROR: Cannot add type " + type + " to id " + id_scope + " in the type table");
 			}

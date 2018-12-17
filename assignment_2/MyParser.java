@@ -30,14 +30,14 @@
                                         STC.output(true, true, true);
                                         System.out.println("END SYMBOL_TABLE");
 
-                                        System.out.println("...beginning semantic analysis");
+                                        System.out.println("...beginning semantic analysis\u005cn");
                                         SemanticAnalyser semanticAnalyser = new SemanticAnalyser();
                                         root.jjtAccept(semanticAnalyser, STC);
 
                                         System.out.println("END SEMANTIC_ANALYSIS");
 
                                         System.out.println("...beginning IR code generation");
-                                        System.out.println("Result to be determiend");
+                                        System.out.println("...ending IR code generation");
 
                                 //	PrintVisitor pv = new PrintVisitor();
                                 //	root.jjtAccept(pv, null);
