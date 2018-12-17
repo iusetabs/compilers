@@ -1048,7 +1048,7 @@ void expression()      : {}
 					<PLUS_SIGN>
 					(
 						( 
-							/*TODO negation?*/	(minus_identifier() | identifier(false) )(<OPEN_BRACKET> arg_list() <CLOSE_BRACKET>)? | integer() | is_true() | is_false() 
+							(minus_identifier() | identifier(false) )(<OPEN_BRACKET> arg_list() <CLOSE_BRACKET>)? | integer() | is_true() | is_false() 
 						) 
 						| <OPEN_BRACKET> expression() <CLOSE_BRACKET>
 						)

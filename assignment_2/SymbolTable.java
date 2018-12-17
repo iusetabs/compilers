@@ -53,6 +53,7 @@ public class SymbolTable extends Object{
 		//this.ScopeTable.remove(this.currentScope); 
 		//this.removeAllItemsFromScope(this.currentScope); don't do this yet.
 		this.currentScope = scopeMonitor.pop(); 
+		this.allScopes.push(this.currentScope); //need to track which scopes we are coming in and out of. 
 	}
 	public Hashtable<String, LinkedList<String>> getScopeTable(){
 		return this.ScopeTable;
